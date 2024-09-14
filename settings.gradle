@@ -1,0 +1,4 @@
+rootProject.name = 'sprout'
+include ':lib'
+include ':test'
+
