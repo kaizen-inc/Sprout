@@ -2,6 +2,7 @@ package inc.kaizen.service.sprout.extension
 
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSValueArgument
+import org.apache.commons.text.CaseUtils
 
 fun <T, U> T?.get(block: (T) -> U): U {
     if(this != null) return block(this) else throw IllegalArgumentException("object is null")
@@ -22,3 +23,11 @@ fun  <T> T?.nonNullify(): T {
 fun KSAnnotation.findArgumentByName(argument: String) = arguments.find { it.name?.asString() == argument }
 
 fun KSAnnotation.findArgument(argument: KSValueArgument) = arguments.find { it == argument }
+
+fun String.toCamelCase(): String {
+    return CaseUtils.toCamelCase(this, false)
+}
+
+fun String.capitalizeFirstLetter(): String {
+    return this.replaceFirstChar { it.uppercase() }
+}

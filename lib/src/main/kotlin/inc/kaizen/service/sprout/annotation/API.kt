@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 annotation class API(
     val serviceName: String,
     val description: String,
-    val packageName: String,
+    val basePackageName: String,
     val version: String,
     val author: String,
     val since: String,

@@ -1,0 +1,7 @@
+inc.kaizen.service.sprout.generator.impl.BaseEntityClassGenerator
+inc.kaizen.service.sprout.generator.impl.BaseModelClassGenerator
+inc.kaizen.service.sprout.generator.impl.ControllerClassGenerator
+inc.kaizen.service.sprout.generator.impl.EntityClassGenerator
+inc.kaizen.service.sprout.generator.impl.ExtensionClassGenerator
+inc.kaizen.service.sprout.generator.impl.RepositoryClassGenerator
+inc.kaizen.service.sprout.generator.impl.ServiceClassGenerator

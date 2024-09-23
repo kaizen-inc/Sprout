@@ -10,36 +10,48 @@ import inc.kaizen.service.sprout.annotation.API
 import inc.kaizen.service.sprout.extension.findArgumentByName
 import inc.kaizen.service.sprout.extension.get
 import inc.kaizen.service.sprout.extension.nonNullify
-import inc.kaizen.service.sprout.generator.impl.ControllerClassGenerator
-import inc.kaizen.service.sprout.generator.impl.RepositoryClassGenerator
-import inc.kaizen.service.sprout.generator.impl.ServiceClassGenerator
+import inc.kaizen.service.sprout.generator.IClassContentGenerator
+import inc.kaizen.service.sprout.generator.impl.*
+import java.security.Provider.Service
+import java.util.*
 
 class APIAnnotationProcessor(private val environment: SymbolProcessorEnvironment) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val symbols = resolver.getSymbolsWithAnnotation(API::class.qualifiedName!!)
         symbols.filterIsInstance<KSClassDeclaration>().forEach { element ->
+            environment.logger.info("Processing ${element.simpleName.asString()}")
+            println("Processing ${element.simpleName.asString()}")
             processAPIAnnotation(element)
         }
         return emptyList()
     }
 
     private fun processAPIAnnotation(element: KSClassDeclaration) {
-        val generators = listOf(ControllerClassGenerator(), ServiceClassGenerator(), RepositoryClassGenerator())
+//        val generators = ServiceLoader.load(IClassContentGenerator::class.java).toList()
+        val generators = listOf(
+            ControllerClassGenerator(),
+            ServiceClassGenerator(),
+            RepositoryClassGenerator(),
+            ExtensionClassGenerator(),
+            ConverterClassGenerator(),
+        )
 
         element.annotations.find { it.shortName.asString() == "API" }.let { annotation ->
             val apiAnnotation = annotation.nonNullify()
             environment.logger.info("Processing API annotation: ${apiAnnotation.shortName.asString()}")
 
-            val packageName = getPackageName(apiAnnotation)
+            val basePackageName = getPackageName(apiAnnotation)
             val serviceName = getServiceName(apiAnnotation)
 
             generators.forEach { generator ->
-                generator.generate(environment.codeGenerator, packageName, serviceName)
+                println("Generating ${generator::class.simpleName} for $serviceName")
+                environment.logger.info("Generating ${generator::class.simpleName} for $serviceName")
+                generator.generate(environment.codeGenerator, basePackageName, serviceName)
             }
         }
     }
 
-    private fun getPackageName(apiAnnotation: KSAnnotation) = getArgumentValue(apiAnnotation, "packageName")
+    private fun getPackageName(apiAnnotation: KSAnnotation) = getArgumentValue(apiAnnotation, "basePackageName")
     private fun getServiceName(apiAnnotation: KSAnnotation) = getArgumentValue(apiAnnotation, "serviceName")
 
     private fun getArgumentValue(apiAnnotation: KSAnnotation, argumentName: String) = apiAnnotation
