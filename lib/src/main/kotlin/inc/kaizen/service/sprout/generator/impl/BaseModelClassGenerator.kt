@@ -1,10 +1,13 @@
 package inc.kaizen.service.sprout.generator.impl
 
 import inc.kaizen.service.sprout.generator.IClassContentGenerator
+import inc.kaizen.service.sprout.generator.PACKAGE_NAME
 
 class BaseModelClassGenerator: IClassContentGenerator {
 
-    override fun generateContent(packageName: String, className: String, serviceName: String) = buildString {
+    override fun generateContent(extensions: Map<String, Any>) = buildString {
+        val packageName = extensions[PACKAGE_NAME]
+
         appendLine("package $packageName")
         appendLine()
         appendLine("import java.util.*")

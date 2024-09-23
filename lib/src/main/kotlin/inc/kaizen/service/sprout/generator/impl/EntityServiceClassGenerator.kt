@@ -6,7 +6,7 @@ import inc.kaizen.service.sprout.generator.IClassContentGenerator
 import inc.kaizen.service.sprout.generator.PACKAGE_NAME
 import inc.kaizen.service.sprout.generator.SERVICE_NAME
 
-class RepositoryClassGenerator: IClassContentGenerator {
+class EntityServiceClassGenerator: IClassContentGenerator {
 
     override fun generateContent(extensions: Map<String, Any>) = buildString {
         val packageName = extensions[PACKAGE_NAME]
@@ -16,13 +16,23 @@ class RepositoryClassGenerator: IClassContentGenerator {
 
         appendLine("package $packageName")
         appendLine()
-        appendLine("import org.springframework.data.jpa.repository.JpaRepository")
-        appendLine("import org.springframework.stereotype.Repository")
+        appendLine("import org.springframework.stereotype.Service")
         appendLine("import java.util.UUID")
         appendLine()
-        appendLine("@Repository")
-        appendLine("interface ${className}: JpaRepository<${capitalizeServiceName}, UUID>")
+        appendLine("@Service")
+        appendLine("class $className {")
+        appendLine()
+        appendLine("    fun convertToEntity($serviceName: $capitalizeServiceName) {")
+        appendLine("            // TODO: Implement this method")
+        appendLine("    }")
+        appendLine()
+        appendLine("    fun convertToDto(entity: ${capitalizeServiceName}Entity) {")
+        appendLine("        // TODO: Implement this method")
+        appendLine("    }")
+        appendLine("}")
     }
 
-    override fun classNameSuffix() = "Repository"
+    override fun classNameSuffix() = "EntityService"
+
+    override fun packageNameSuffix() = "service"
 }

@@ -12,7 +12,6 @@ import inc.kaizen.service.sprout.extension.get
 import inc.kaizen.service.sprout.extension.nonNullify
 import inc.kaizen.service.sprout.generator.IClassContentGenerator
 import inc.kaizen.service.sprout.generator.impl.*
-import java.security.Provider.Service
 import java.util.*
 
 class APIAnnotationProcessor(private val environment: SymbolProcessorEnvironment) : SymbolProcessor {
@@ -34,6 +33,8 @@ class APIAnnotationProcessor(private val environment: SymbolProcessorEnvironment
             RepositoryClassGenerator(),
             ExtensionClassGenerator(),
             ConverterClassGenerator(),
+            EntityServiceClassGenerator(),
+            EntityClassGenerator()
         )
 
         element.annotations.find { it.shortName.asString() == "API" }.let { annotation ->
@@ -43,10 +44,15 @@ class APIAnnotationProcessor(private val environment: SymbolProcessorEnvironment
             val basePackageName = getPackageName(apiAnnotation)
             val serviceName = getServiceName(apiAnnotation)
 
+            val extensions = mapOf(
+                "basePackageName" to basePackageName,
+                "serviceName" to serviceName
+            )
+
             generators.forEach { generator ->
                 println("Generating ${generator::class.simpleName} for $serviceName")
                 environment.logger.info("Generating ${generator::class.simpleName} for $serviceName")
-                generator.generate(environment.codeGenerator, basePackageName, serviceName)
+                generator.generate(environment.codeGenerator, extensions)
             }
         }
     }
