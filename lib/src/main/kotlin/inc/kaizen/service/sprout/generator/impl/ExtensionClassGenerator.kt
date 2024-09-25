@@ -33,7 +33,16 @@ class ExtensionClassGenerator: IClassContentGenerator {
         appendLine("fun String.toUUID(): UUID {")
         appendLine("	return UUID.fromString(this)")
         appendLine("}")
+        appendLine()
+        appendLine("fun  <T> T?.nonNullify(): T {")
+        appendLine("	if(this != null) return this else throw IllegalArgumentException(\"object is null\")")
+        appendLine("}")
+        appendLine()
     }
 
     override fun classNameSuffix() = "Extension"
+
+    override fun packageName(basePackageName: String, serviceName: String) = "$basePackageName.base.extension"
+
+    override fun className(serviceName: String) = "Extension"
 }

@@ -10,6 +10,7 @@ class ServiceClassGenerator: IClassContentGenerator {
         val basePackaageName = extensions[BASE_PACKAGE_NAME]
         val serviceName = extensions[SERVICE_NAME] as String
         val className = extensions[CLASS_NAME]
+        val modelPackageName = extensions[MODEL_PACKAGE_NAME]
         val capitalizeServiceName = serviceName.capitalizeFirstLetter()
 
         appendLine("package $packageName")
@@ -21,11 +22,12 @@ class ServiceClassGenerator: IClassContentGenerator {
         appendLine("import org.springframework.data.domain.Page")
         appendLine("import org.springframework.data.domain.PageRequest")
         appendLine("import java.util.UUID")
+        appendLine("import $basePackaageName.base.service.IService")
         appendLine("import $basePackaageName.$serviceName.repository.${capitalizeServiceName}Repository")
-        appendLine()
+        appendLine("import $modelPackageName.$capitalizeServiceName")
         appendLine()
         appendLine("@Service")
-        appendLine("class ${className} {")
+        appendLine("class ${className}: IService<${capitalizeServiceName}, UUID>{")
         appendLine()
         appendLine("    @Autowired")
         appendLine("    private lateinit var ${serviceName}Repository: ${capitalizeServiceName}Repository")

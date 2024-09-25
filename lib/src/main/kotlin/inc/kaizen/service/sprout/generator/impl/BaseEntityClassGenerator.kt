@@ -20,17 +20,23 @@ class BaseEntityClassGenerator: IClassContentGenerator {
         appendLine()
         appendLine("@MappedSuperclass")
         appendLine("@EntityListeners(AuditingEntityListener::class)")
-        appendLine("data class BaseEntity(")
+        appendLine("abstract class BaseEntity {")
         appendLine()
         appendLine("    @CreatedDate")
         appendLine("    @Column(name = \"created_at\", nullable = false, updatable = false)")
-        appendLine("    val createdAt: Date,")
+        appendLine("    lateinit var createdAt: Date")
         appendLine()
         appendLine("    @LastModifiedDate")
         appendLine("    @Column(name = \"updated_at\", nullable = false)")
-        appendLine("    val updatedAt: Date")
-        appendLine(")")
+        appendLine("    lateinit var updatedAt: Date")
+        appendLine("}")
     }
 
-    override fun classNameSuffix() = "Entity"
+    override fun classNameSuffix() = ""
+
+    override fun packageNameSuffix() = "base"
+
+    override fun className(serviceName: String) = "BaseEntity"
+
+    override fun packageName(basePackageName: String, serviceName: String) = "$basePackageName.base.model.entity"
 }

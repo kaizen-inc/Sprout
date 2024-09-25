@@ -19,4 +19,10 @@ class BaseModelClassGenerator: IClassContentGenerator {
     }
 
     override fun classNameSuffix() = ""
+
+    override fun packageNameSuffix() = "base"
+
+    override fun className(serviceName: String) = "Base"
+
+    override fun packageName(basePackageName: String, serviceName: String) = "$basePackageName.base.model.data"
 }

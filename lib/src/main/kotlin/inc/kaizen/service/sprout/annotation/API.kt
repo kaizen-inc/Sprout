@@ -13,5 +13,5 @@ annotation class API(
     val since: String,
     val deprecated: Boolean = false,
     val authentication: Boolean = true,
-    val model: KClass<*>,
+    val model: KClass<*>
 )
