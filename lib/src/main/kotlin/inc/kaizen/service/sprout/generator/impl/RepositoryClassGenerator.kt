@@ -9,7 +9,7 @@ class RepositoryClassGenerator: IClassContentGenerator {
         val packageName = extensions[PACKAGE_NAME]
         val serviceName = extensions[SERVICE_NAME] as String
         val className = extensions[CLASS_NAME]
-        val modelPackageName = extensions[MODEL_PACKAGE_NAME]
+        val basePackaageName = extensions[BASE_PACKAGE_NAME]
         val capitalizeServiceName = serviceName.capitalizeFirstLetter()
 
         appendLine("package $packageName")
@@ -17,10 +17,10 @@ class RepositoryClassGenerator: IClassContentGenerator {
         appendLine("import org.springframework.data.jpa.repository.JpaRepository")
         appendLine("import org.springframework.stereotype.Repository")
         appendLine("import java.util.UUID")
-        appendLine("import $modelPackageName.$capitalizeServiceName")
+        appendLine("import $basePackaageName.$serviceName.model.entity.${capitalizeServiceName}Entity")
         appendLine()
         appendLine("@Repository")
-        appendLine("interface ${className}: JpaRepository<${capitalizeServiceName}, UUID>")
+        appendLine("interface ${className}: JpaRepository<${capitalizeServiceName}Entity, UUID>")
     }
 
     override fun classNameSuffix() = "Repository"

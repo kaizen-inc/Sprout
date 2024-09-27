@@ -1,22 +1,21 @@
 package inc.kaizen.service.sprout.annotation
 
-import kotlin.reflect.KClass
+import kotlin.annotation.AnnotationTarget.*
 
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FIELD)
+@Target(CLASS, FIELD)
 annotation class Model(
     val name: String,
     val description: String,
     val basePackageName: String,
     val serviceName: String,
     val author: String,
+    val schema: String,
     val since: String,
     val deprecated: Boolean = false,
     val version: String,
 )
 
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.FIELD)
+@Target(FIELD)
 annotation class Field(
     val name: String,
     val description: String,
@@ -28,16 +27,8 @@ annotation class Field(
     val version: String
 )
 
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.FIELD)
-annotation class Reference(
-    val name: String,
-    val description: String,
-    val required: Boolean = true,
-    val deprecated: Boolean = false,
-    val readOnly: Boolean = false,
-    val writeOnly: Boolean = false,
-    val since: String,
-    val version: String,
-    val type: KClass<*>
-)
+@Target(PROPERTY, FIELD, PROPERTY_SETTER, PROPERTY_GETTER)
+annotation class Reference()
+
+@Target(PROPERTY, FIELD, PROPERTY_SETTER, PROPERTY_GETTER)
+annotation class Id()

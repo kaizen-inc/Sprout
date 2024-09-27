@@ -15,18 +15,7 @@ import inc.kaizen.service.sprout.generator.IClassContentGenerator
 import inc.kaizen.service.sprout.generator.MODEL_PACKAGE_NAME
 import inc.kaizen.service.sprout.generator.impl.*
 import java.util.*
-import kotlin.collections.List
-import kotlin.collections.associate
-import kotlin.collections.emptyList
-import kotlin.collections.filterValues
-import kotlin.collections.find
-import kotlin.collections.forEach
-import kotlin.collections.listOf
-import kotlin.collections.mapKeys
-import kotlin.collections.mapValues
 import kotlin.collections.set
-import kotlin.collections.toList
-import kotlin.collections.toMutableMap
 import kotlin.reflect.KClass
 
 class APIAnnotationProcessor(private val environment: SymbolProcessorEnvironment) : SymbolProcessor {
@@ -98,7 +87,8 @@ class APIAnnotationProcessor(private val environment: SymbolProcessorEnvironment
             ServiceClassGenerator(),
             RepositoryClassGenerator(),
             ExtensionClassGenerator(),
-            ConverterClassGenerator(),
+            ModelConverterClassGenerator(),
+            EntityConverterClassGenerator(),
             EntityServiceClassGenerator(),
             EntityClassGenerator()
         )
@@ -115,7 +105,7 @@ class APIAnnotationProcessor(private val environment: SymbolProcessorEnvironment
                 .mapKeys { it.key!! }
                 .toMutableMap()
 
-            extensions["model"] = element.javaClass.kotlin
+            extensions["model"] = element.asStarProjectedType().declaration
             extensions[MODEL_PACKAGE_NAME] = element.packageName.asString()
 
             generators.forEach { generator ->

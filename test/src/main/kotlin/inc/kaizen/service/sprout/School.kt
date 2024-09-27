@@ -1,6 +1,7 @@
 package inc.kaizen.service.sprout
 
 import inc.kaizen.service.sprout.annotation.API
+import inc.kaizen.service.sprout.annotation.Id
 import inc.kaizen.service.sprout.annotation.Model
 import java.util.*
 
@@ -11,9 +12,11 @@ import java.util.*
     serviceName = "school",
     author  = "Kaizen",
     since = "2023-10-01",
+    schema = "education",
     version = "1.0"
 )
 data class School(
+    @Id
     val id: UUID,
     val name: String
 )
