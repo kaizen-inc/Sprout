@@ -1,0 +1,24 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '2.0.20'
+    id "org.jetbrains.kotlin.plugin.noarg" version "1.9.23"
+    id "org.jetbrains.kotlin.plugin.allopen" version "1.9.23"
+}
+
+dependencies {
+    implementation project(':base')
+
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.2.4'
+    implementation 'org.springframework.boot:spring-boot-starter-security:3.2.4'
+
+    implementation('org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.2.4')
+    implementation('org.springframework.boot:spring-boot-starter-oauth2-authorization-server:3.2.4')
+    implementation('org.springframework.boot:spring-boot-starter-oauth2-client:3.2.4')
+
+    implementation("org.mapstruct:mapstruct:1.5.3.Final")
+    implementation("org.mapstruct.extensions.spring:mapstruct-spring-annotations:0.1.2")
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}

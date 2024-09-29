@@ -1,34 +1,21 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '2.0.20'
-//    id 'org.springframework.boot' version '3.2.4'
-//    id 'io.spring.dependency-management' version '1.1.4'
-    id 'com.google.devtools.ksp' version '2.0.20-1.0.24'
-}
-
-group = 'inc.kaizen.service'
-version = '1.0-SNAPSHOT'
-
-sourceSets {
-    main {
-        java.srcDirs += "build/generated/ksp/main/kotlin"
-    }
-    test {
-        java.srcDirs += "build/generated/ksp/test/kotlin"
-    }
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
+    implementation project(':base')
+
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
-//    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.2.4'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.2.4'
 
 //    ksp 'com.google.auto.service:auto-service:1.0.1'
 //    implementation 'com.google.auto.service:auto-service-annotations:1.0.1'
     implementation "com.google.devtools.ksp:symbol-processing-api:2.0.20-1.0.24"
+
+    implementation("org.mapstruct:mapstruct:1.5.3.Final")
+    implementation("org.mapstruct.extensions.spring:mapstruct-spring-annotations:0.1.2")
 
     implementation 'com.squareup:kotlinpoet:1.18.1'
     implementation 'com.squareup:kotlinpoet-ksp:1.18.1'
@@ -38,9 +25,3 @@ dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
 }
 
-test {
-    useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(21)
-}

@@ -9,12 +9,10 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import inc.kaizen.service.sprout.annotation.API
 import inc.kaizen.service.sprout.annotation.Model
+import inc.kaizen.service.sprout.base.extension.nonNullify
 import inc.kaizen.service.sprout.extension.findArgumentByName
-import inc.kaizen.service.sprout.extension.nonNullify
-import inc.kaizen.service.sprout.generator.IClassContentGenerator
 import inc.kaizen.service.sprout.generator.MODEL_PACKAGE_NAME
 import inc.kaizen.service.sprout.generator.impl.*
-import java.util.*
 import kotlin.collections.set
 import kotlin.reflect.KClass
 
@@ -114,9 +112,4 @@ class APIAnnotationProcessor(private val environment: SymbolProcessorEnvironment
             }
         }
     }
-}
-
-fun main(args: Array<String>) {
-    val generators = ServiceLoader.load(IClassContentGenerator::class.java).toList()
-    generators.forEach { println(it) }
 }

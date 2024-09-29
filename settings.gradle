@@ -1,4 +1,6 @@
 rootProject.name = 'sprout'
+include ':base'
+include ':auth'
 include ':lib'
 include ':test'
 
