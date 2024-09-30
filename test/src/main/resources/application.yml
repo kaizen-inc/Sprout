@@ -1,0 +1,58 @@
+server:
+  servlet:
+    contextPath: /api/v1
+rsa:
+  private-key: classpath:certs/private.pem
+  public-key: classpath:certs/public.pem
+spring:
+  sql:
+    init:
+      mode: always
+  output:
+    ansi:
+      enabled: ALWAYS
+  datasource:
+    url: jdbc:postgresql://localhost:5432/education
+    username: postgres
+    password: admin
+  jpa:
+    hibernate:
+      hbm2ddl:
+        auto: update
+      enable_lazy_load_no_trans: true
+      event:
+        merge:
+          entity_copy_observer: allow
+      jdbc:
+        lob:
+          non_contextual_creation: true
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+  #  security:
+  #    oauth2:
+  #      authorizationserver:
+  #        client:
+  #          demo-client:
+  #            required-authentication-consent: true
+  #            registration:
+  #              client-id: prashanth
+  #              client-secret: {noop}password
+  #              authorization-grant-types: client_credentials,authorization_code,refresh_token
+  #              redirect-uris: http://127.0.0.1:8082/login/oauth2/code/reg-client
+  #              scopes: user.read,user.write,openid
+  #              client-authentication-methods: client_secret_basic
+  #      resourceserver:
+  #        jwt:
+  #          issuer-uri: http://localhost:8080/oauth2/parichaya
+  #          jwk-set-uri: http://localhost:8080/oauth2/parichaya/openid-connect/certs
+logging:
+  level:
+    org:
+      springframework:
+        web: TRACE
+        security: TRACE

@@ -4,6 +4,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import inc.kaizen.service.sprout.extension.findComplexType
 import inc.kaizen.service.sprout.extension.findIdField
 import inc.kaizen.service.sprout.extension.getProperties
+import inc.kaizen.service.sprout.extension.toCamelCase
 import inc.kaizen.service.sprout.generator.*
 
 class EntityClassGenerator: IClassContentGenerator {
@@ -25,7 +26,7 @@ class EntityClassGenerator: IClassContentGenerator {
         appendLine("import jakarta.persistence.*")
         appendLine("import $basePackageName.base.model.entity.BaseEntity")
         complexFields.iterator().forEach {
-            appendLine("import $modelPackageName.${it.type}")
+            appendLine("import $basePackageName.${it.type.toString().toCamelCase()}.model.entity.${it.type}Entity")
         }
         appendLine()
         appendLine("@Entity")
@@ -40,7 +41,13 @@ class EntityClassGenerator: IClassContentGenerator {
             appendLine("    val ${it}: ${it.type},")
         }
         modelClass.getProperties(false).forEach { it ->
-            appendLine("    val ${it}: ${it.type},")
+            if(complexFields.contains(it)) {
+                appendLine("    @ManyToOne") //FIXME: find the relevant mapping
+                appendLine("    @JoinColumn(name = \"${it.type.toString().toCamelCase()}\")")
+                appendLine("    val ${it}: ${it.type}Entity,")
+            } else {
+                appendLine("    val ${it}: ${it.type},")
+            }
         }
         appendLine("): BaseEntity()")
     }

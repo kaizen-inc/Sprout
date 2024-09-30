@@ -1,4 +1,4 @@
-package inc.kaizen.service.sprout
+package inc.kaizen.service.education
 
 import inc.kaizen.service.sprout.annotation.API
 import inc.kaizen.service.sprout.annotation.Id
