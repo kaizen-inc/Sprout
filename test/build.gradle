@@ -17,9 +17,9 @@ dependencies {
 
     implementation('org.postgresql:postgresql')
 
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.4.0'
-
+    implementation project(":auth")
     implementation project(":lib")
+    implementation project(":doc")
     ksp project(":lib")
 //    kspTest project(":lib")
 }

@@ -7,5 +7,5 @@ import java.util.*
 
 @Repository
 interface AuthUserRepository: JpaRepository<AuthUserEntity, String> {
-    fun findByUsername(username: String?): Optional<AuthUserEntity>
+    fun findByName(name: String?): Optional<AuthUserEntity>
 }

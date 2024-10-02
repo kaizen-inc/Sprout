@@ -1,5 +1,6 @@
 package inc.kaizen.service.sprout.auth.extension
 
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.multipart.MultipartFile
 
@@ -12,4 +13,8 @@ fun MultipartFile.getFileExtension(): String {
 
 fun currentUserId(): String {
     return SecurityContextHolder.getContext().authentication.name
+}
+
+fun authentication(): Authentication {
+    return SecurityContextHolder.getContext().authentication
 }

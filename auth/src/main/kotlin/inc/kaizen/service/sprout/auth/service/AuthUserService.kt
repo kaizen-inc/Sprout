@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.oauth2.jwt.JwtClaimsSet
 import org.springframework.security.oauth2.jwt.JwtEncoder
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters
+import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.nio.file.Files
 import java.nio.file.Path
@@ -27,6 +28,7 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.stream.Collectors
 
+@Service
 class AuthUserService: UserDetailsService, IService<AuthUser, String> {
 
     private val uploadDirectory: Path = Paths.get("resumes")
@@ -38,16 +40,13 @@ class AuthUserService: UserDetailsService, IService<AuthUser, String> {
     private lateinit var messageSource: MessageSource
 
     @Autowired
-    private lateinit var repository: AuthUserRepository
+    private lateinit var userRepository: AuthUserRepository
 
     @Autowired
     private lateinit var entityService: AuthUserEntityService
 
-    @Autowired
-    private lateinit var encoder: JwtEncoder
-
     override fun loadUserByUsername(username: String): UserDetails {
-        return repository
+        return userRepository
             .findById(username)
             .map { person -> User.withUsername(person.username)
                 .password(person.password)
@@ -58,8 +57,8 @@ class AuthUserService: UserDetailsService, IService<AuthUser, String> {
     }
 
     override fun create(user: AuthUser): AuthUser {
-        if (!repository.existsById(user.username)) {
-            return entityService.convert(repository.save(entityService.convert(user)))
+        if (!userRepository.existsById(user.username)) {
+            return entityService.convert(userRepository.save(entityService.convert(user)))
         } else {
             val foundMessage = messageSource
                 .getMessage("Exception.found",
@@ -72,7 +71,7 @@ class AuthUserService: UserDetailsService, IService<AuthUser, String> {
 
     // Check the authority to access the user
     override fun deleteById(id: String) {
-        if(repository.existsById(id)) {
+        if(userRepository.existsById(id)) {
             val message = messageSource
                 .getMessage("Exception.noSuchElementException",
                     arrayOf(id),
@@ -80,13 +79,13 @@ class AuthUserService: UserDetailsService, IService<AuthUser, String> {
                     LocaleContextHolder.getLocale())
             throw NoSuchElementException(message)
         }
-        repository.deleteById(id)
+        userRepository.deleteById(id)
     }
 
     // Check the authority to access the user
     override fun update(user: AuthUser): AuthUser {
-        if (repository.existsById(user.username)) {
-            return entityService.convert(repository.save(entityService.convert(user)))
+        if (userRepository.existsById(user.username)) {
+            return entityService.convert(userRepository.save(entityService.convert(user)))
         } else {
             val message = messageSource
                 .getMessage("Exception.noSuchElementException",
@@ -99,7 +98,7 @@ class AuthUserService: UserDetailsService, IService<AuthUser, String> {
 
     // Check the authority to access the user
     override fun findById(id: String): AuthUser? {
-        return repository
+        return userRepository
             .findById(id)
             .map { entityService.convert(it) }
             .orElseGet {
@@ -113,12 +112,12 @@ class AuthUserService: UserDetailsService, IService<AuthUser, String> {
         pageSize: Int
     ): Page<AuthUser> {
         val pageable = PageRequest.of(page, pageSize)
-        return repository.findAll(pageable).map { entityService.convert(it) }
+        return userRepository.findAll(pageable).map { entityService.convert(it) }
     }
 
     fun changePassword(oldPassword: String?, newPassword: String?) {
         val userId = currentUserId()
-        val userEntity = repository.findById(userId).orElseThrow {
+        val userEntity = userRepository.findById(userId).orElseThrow {
             val message = messageSource.getMessage(
                 "Exception.noSuchElementException",
                 arrayOf(userId),
@@ -131,7 +130,7 @@ class AuthUserService: UserDetailsService, IService<AuthUser, String> {
         if (oldPassword != null && newPassword != null) {
             if (userEntity.password == oldPassword) {
                 userEntity.secret = newPassword
-                repository.save(userEntity)
+                userRepository.save(userEntity)
             } else {
                 val message = messageSource.getMessage(
                     "Exception.invalidOldPassword",
@@ -157,25 +156,5 @@ class AuthUserService: UserDetailsService, IService<AuthUser, String> {
         val fileName: String = userId.plus(".").plus(file.getFileExtension())
         val filePath = uploadDirectory.resolve(fileName)
         Files.copy(file.inputStream, filePath)
-    }
-
-    fun generateToken(authentication: Authentication): String {
-        val scope = authentication
-            .authorities
-            .stream()
-            .map { it.authority }
-            .collect(Collectors.joining(" "))
-
-        val now = Instant.now()
-        val claimsSet = JwtClaimsSet
-            .builder()
-            .issuer("self")
-            .issuedAt(now)
-            .expiresAt(now.plus(1, ChronoUnit.HOURS))
-            .subject(authentication.name)
-            .claim("scope", scope)
-            .build()
-
-        return encoder.encode(JwtEncoderParameters.from(claimsSet)).tokenValue
     }
 }

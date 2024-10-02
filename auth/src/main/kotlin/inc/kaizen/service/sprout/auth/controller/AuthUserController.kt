@@ -1,7 +1,8 @@
-package inc.kaizen.parichaya.api
+package inc.kaizen.service.sprout.auth.controller
 
 import inc.kaizen.service.sprout.auth.model.data.AuthUser
 import inc.kaizen.service.sprout.auth.service.AuthUserService
+import inc.kaizen.service.sprout.auth.service.UserTokenService
 import inc.kaizen.service.sprout.base.controller.IController
 import inc.kaizen.service.sprout.base.extension.closureWithReturn
 import inc.kaizen.service.sprout.base.service.IService
@@ -18,8 +19,8 @@ class AuthUserController: IController<AuthUser> {
     @Autowired
     lateinit var authUserService: AuthUserService
 
-//    @Autowired
-//    lateinit var tokenService: TokenService
+    @Autowired
+    private lateinit var tokenService: UserTokenService
 
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
@@ -33,9 +34,10 @@ class AuthUserController: IController<AuthUser> {
     }
 
     @PostMapping("/user/login")
-    fun login(authentication: Authentication): ResponseEntity<Any> {
+    fun login(): ResponseEntity<Any> {
         return closureWithReturn {
-            return@closureWithReturn authUserService.generateToken(authentication)
+            val token = tokenService.allocateToken(null)
+            return@closureWithReturn token.key
         }
     }
 

@@ -25,10 +25,13 @@ import org.springframework.security.web.SecurityFilterChain
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-open class SecurityConfig(private val keyProperty: RsaKeyProperty) {
+open class SecurityConfig {
 
     @Autowired
     private lateinit var authUserManager: AuthUserService
+
+    @Autowired
+    private lateinit var keyProperty: RsaKeyProperty
 
     @Bean
     open fun authProvider(passwordEncoder: PasswordEncoder): DaoAuthenticationProvider {
@@ -48,6 +51,9 @@ open class SecurityConfig(private val keyProperty: RsaKeyProperty) {
                 authorize
                     .requestMatchers("/ping").permitAll()
                     .requestMatchers("/user/**").permitAll()
+                    .requestMatchers("/v3/**").permitAll()
+                    .requestMatchers("/api-docs").permitAll()
+                    .requestMatchers("/swagger-ui/**").permitAll()
                     .anyRequest().authenticated()
             }
             .sessionManagement { sessionManagement ->

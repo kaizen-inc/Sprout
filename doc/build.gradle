@@ -1,0 +1,9 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '2.0.20'
+}
+
+dependencies {
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.23'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+}

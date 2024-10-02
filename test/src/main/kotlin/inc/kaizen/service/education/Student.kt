@@ -12,7 +12,7 @@ import java.util.*
     basePackageName = "inc.kaizen.service.education",
     serviceName = "student",
     author  = "Kaizen",
-    schema = "education",
+    schema = "public",
     since = "2023-10-01",
     version = "1.0"
 )
@@ -21,7 +21,7 @@ data class Student(
     val id: UUID,
     val name: String,
     @Reference
-    val school: School
+    val standard: Standard
 )
 
 @API(
