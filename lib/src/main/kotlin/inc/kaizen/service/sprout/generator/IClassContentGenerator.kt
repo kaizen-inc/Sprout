@@ -24,7 +24,7 @@ interface IClassContentGenerator {
         val filePath = "${packageName.replace('.', '/')}/$className"
         if(!codeGenerator.generatedFile.map { it.nameWithoutExtension }.contains(className)) { //FIXME this is a hack to avoid generating the same file multiple times
             val file = codeGenerator.createNewFileByPath(
-                Dependencies(false),
+                Dependencies.ALL_FILES,
                 filePath
             )
 
