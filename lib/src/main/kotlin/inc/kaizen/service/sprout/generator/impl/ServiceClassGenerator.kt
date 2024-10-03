@@ -22,7 +22,7 @@ class ServiceClassGenerator: IClassContentGenerator {
         appendLine("import org.springframework.data.domain.Page")
         appendLine("import org.springframework.data.domain.PageRequest")
         appendLine("import java.util.UUID")
-        appendLine("import $basePackaageName.base.service.IService")
+        appendLine("import inc.kaizen.service.sprout.base.service.IService")
         appendLine("import $basePackaageName.$serviceName.repository.${capitalizeServiceName}Repository")
         appendLine("import $basePackaageName.$serviceName.model.entity.${capitalizeServiceName}Entity")
         appendLine("import $modelPackageName.$capitalizeServiceName")

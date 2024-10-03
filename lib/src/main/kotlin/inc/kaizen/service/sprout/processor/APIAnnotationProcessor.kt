@@ -78,13 +78,13 @@ class APIAnnotationProcessor(private val environment: SymbolProcessorEnvironment
 
     private fun processModelAnnotation(element: KSClassDeclaration, resolver: Resolver) {
         val generators = listOf(
-            BaseEntityClassGenerator(),
-            BaseModelClassGenerator(),
-            ServiceInterfaceGenerator(),
-            ControllerInterfaceGenerator(),
+//            BaseEntityClassGenerator(),
+//            BaseModelClassGenerator(),
+//            ExtensionClassGenerator(),
+//            ServiceInterfaceGenerator(),
+//            ControllerInterfaceGenerator(),
             ServiceClassGenerator(),
             RepositoryClassGenerator(),
-            ExtensionClassGenerator(),
             ModelConverterClassGenerator(),
             EntityConverterClassGenerator(),
             EntityServiceClassGenerator(),

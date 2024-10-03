@@ -24,7 +24,7 @@ class EntityClassGenerator: IClassContentGenerator {
         appendLine()
         appendLine("import java.util.*")
         appendLine("import jakarta.persistence.*")
-        appendLine("import $basePackageName.base.model.entity.BaseEntity")
+        appendLine("import inc.kaizen.service.sprout.base.model.entity.BaseEntity")
         complexFields.iterator().forEach {
             appendLine("import $basePackageName.${it.type.toString().toCamelCase()}.model.entity.${it.type}Entity")
         }
