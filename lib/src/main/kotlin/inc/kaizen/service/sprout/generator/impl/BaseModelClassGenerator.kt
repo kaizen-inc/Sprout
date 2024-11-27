@@ -3,6 +3,7 @@ package inc.kaizen.service.sprout.generator.impl
 import inc.kaizen.service.sprout.generator.IClassContentGenerator
 import inc.kaizen.service.sprout.generator.PACKAGE_NAME
 
+@Deprecated("This generator class is not used anymore")
 class BaseModelClassGenerator: IClassContentGenerator {
 
     override fun generateContent(extensions: Map<String, Any>) = buildString {

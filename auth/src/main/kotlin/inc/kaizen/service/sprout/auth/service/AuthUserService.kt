@@ -12,21 +12,14 @@ import org.springframework.context.MessageSource
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.oauth2.jwt.JwtClaimsSet
-import org.springframework.security.oauth2.jwt.JwtEncoder
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import java.util.stream.Collectors
 
 @Service
 class AuthUserService: UserDetailsService, IService<AuthUser, String> {
@@ -70,16 +63,18 @@ class AuthUserService: UserDetailsService, IService<AuthUser, String> {
     }
 
     // Check the authority to access the user
-    override fun deleteById(id: String) {
-        if(userRepository.existsById(id)) {
+    override fun deleteById(
+        ids: Array<out String>
+    ) {
+        if(userRepository.existsById(ids.last())) {
             val message = messageSource
                 .getMessage("Exception.noSuchElementException",
-                    arrayOf(id),
+                    arrayOf(ids.last()),
                     "Exception occurred",
                     LocaleContextHolder.getLocale())
             throw NoSuchElementException(message)
         }
-        userRepository.deleteById(id)
+        userRepository.deleteById(ids.last())
     }
 
     // Check the authority to access the user
@@ -97,9 +92,11 @@ class AuthUserService: UserDetailsService, IService<AuthUser, String> {
     }
 
     // Check the authority to access the user
-    override fun findById(id: String): AuthUser? {
+    override fun findById(
+        ids: Array<out String>
+    ): AuthUser? {
         return userRepository
-            .findById(id)
+            .findById(ids.last())
             .map { entityService.convert(it) }
             .orElseGet {
                 throw Exception("Person not found")

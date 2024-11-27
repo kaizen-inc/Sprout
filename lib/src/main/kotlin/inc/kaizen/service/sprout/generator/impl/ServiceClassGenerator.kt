@@ -1,5 +1,6 @@
 package inc.kaizen.service.sprout.generator.impl
 
+import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import inc.kaizen.service.sprout.extension.capitalizeFirstLetter
 import inc.kaizen.service.sprout.generator.*
 
@@ -7,11 +8,12 @@ class ServiceClassGenerator: IClassContentGenerator {
 
     override fun generateContent(extensions: Map<String, Any>) = buildString {
         val packageName = extensions[PACKAGE_NAME]
-        val basePackaageName = extensions[BASE_PACKAGE_NAME]
+        val basePackageName = extensions[BASE_PACKAGE_NAME]
         val serviceName = extensions[SERVICE_NAME] as String
         val className = extensions[CLASS_NAME]
         val modelPackageName = extensions[MODEL_PACKAGE_NAME]
         val capitalizeServiceName = serviceName.capitalizeFirstLetter()
+        val extensionFunctions = extensions[EXTENSION_METHODS] as List<*>
 
         appendLine("package $packageName")
         appendLine()
@@ -23,10 +25,11 @@ class ServiceClassGenerator: IClassContentGenerator {
         appendLine("import org.springframework.data.domain.PageRequest")
         appendLine("import java.util.UUID")
         appendLine("import inc.kaizen.service.sprout.base.service.IService")
-        appendLine("import $basePackaageName.$serviceName.repository.${capitalizeServiceName}Repository")
-        appendLine("import $basePackaageName.$serviceName.model.entity.${capitalizeServiceName}Entity")
+        appendLine("import $basePackageName.$serviceName.repository.${capitalizeServiceName}Repository")
+        appendLine("import $basePackageName.$serviceName.model.entity.${capitalizeServiceName}Entity")
         appendLine("import $modelPackageName.$capitalizeServiceName")
         appendLine()
+        appendLine("@Suppress(\"PARAMETER_NAME_CHANGED_ON_OVERRIDE\")")
         appendLine("@Service")
         appendLine("class ${className}: IService<${capitalizeServiceName}, UUID>{")
         appendLine()
@@ -45,8 +48,10 @@ class ServiceClassGenerator: IClassContentGenerator {
         appendLine("        return ${serviceName}EntityService.convert(created)")
         appendLine("    }")
         appendLine()
-        appendLine("    override fun deleteById(id: UUID) {")
-        appendLine("        ${serviceName}Repository.deleteById(id)")
+        appendLine("    override fun deleteById(")
+        appendLine("        ids: Array<out UUID>")
+        appendLine("    ) {")
+        appendLine("        ${serviceName}Repository.deleteById(ids.last())")
         appendLine("    }")
         appendLine()
         appendLine("    override fun update(${serviceName}: ${capitalizeServiceName}): ${capitalizeServiceName} {")
@@ -64,14 +69,16 @@ class ServiceClassGenerator: IClassContentGenerator {
         appendLine("        }")
         appendLine("    }")
         appendLine()
-        appendLine("    override fun findById(id: UUID): ${capitalizeServiceName}? {")
-        appendLine("        val optional = ${serviceName}Repository.findById(id)")
+        appendLine("    override fun findById(")
+        appendLine("        ids: Array<out UUID>")
+        appendLine("    ): ${capitalizeServiceName}? {")
+        appendLine("        val optional = ${serviceName}Repository.findById(ids.last())")
         appendLine("        if (optional.isPresent) {")
         appendLine("            return ${serviceName}EntityService.convert(optional.get())")
         appendLine("        } else {")
         appendLine("            val message = messageSource")
         appendLine("                .getMessage(\"Exception.noSuchElementException\",")
-        appendLine("                    arrayOf(id.toString()),")
+        appendLine("                    arrayOf(ids.last().toString()),")
         appendLine("                    \"Exception occurred\",")
         appendLine("                    LocaleContextHolder.getLocale())")
         appendLine("            throw NoSuchElementException(message)")
@@ -86,9 +93,33 @@ class ServiceClassGenerator: IClassContentGenerator {
         appendLine("        val entities = ${serviceName}Repository.findAll(pageable)")
         appendLine("        return entities.map { ${serviceName}EntityService.convert(it) }")
         appendLine("    }")
+        extensionFunctions.forEach { function ->
+            appendLine()
+            if (function is KSFunctionDeclaration)
+                appendLine(toRequestMapping(function, serviceName))
+        }
         appendLine("}")
         appendLine()
     }
 
     override fun classNameSuffix() = "Service"
+
+    private fun toRequestMapping(function: KSFunctionDeclaration, serviceName: String): String {
+        return buildString {
+            appendLine("  fun ${function}(")
+            function.parameters.forEachIndexed { index, parameter ->
+                appendLine("    ${parameter}: ${parameter.type}")
+                if (index < function.parameters.size - 1) appendLine(",")
+            }
+            appendLine("  ): ${function.returnType} {")
+            appendLine("    val entity = ${serviceName}Repository.${function}(")
+            function.parameters.forEachIndexed { index, parameter ->
+                appendLine("      ${parameter} = ${parameter}")
+                if (index < function.parameters.size - 1) appendLine(",")
+            }
+            appendLine("    )")
+            appendLine("    return ${serviceName}EntityService.convert(entity)")
+            appendLine("  }")
+        }
+    }
 }

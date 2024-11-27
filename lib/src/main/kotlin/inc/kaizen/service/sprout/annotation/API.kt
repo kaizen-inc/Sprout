@@ -8,6 +8,7 @@ annotation class API(
     val serviceName: String,
     val description: String,
     val basePackageName: String,
+    val parents: Array<String> = [],
     val version: String,
     val author: String,
     val since: String,

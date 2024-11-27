@@ -13,13 +13,13 @@ interface IService<T, U> {
     fun create(t: T): T
 
     @Throws(Exception::class)
-    fun deleteById(id: U)
+    fun deleteById(id: Array<out U>)
 
     @Throws(Exception::class)
     fun update(t: T): T
 
     @Throws(Exception::class)
-    fun findById(id: U): T?
+    fun findById(id: Array<out U>): T?
 
     @Throws(Exception::class)
     fun findAll(

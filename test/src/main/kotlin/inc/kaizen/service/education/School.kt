@@ -13,7 +13,8 @@ import java.util.*
     author  = "Kaizen",
     since = "2023-10-01",
     schema = "public",
-    version = "1.0"
+    version = "1.0",
+    api = SchoolApi::class
 )
 data class School(
     @Id
@@ -26,12 +27,12 @@ data class School(
     description = "School API",
     basePackageName = "inc.kaizen.service.education",
     version = "1.0",
-    author = "Kaizen",
+    author = "Kaizen, Inc",
     since = "2023-10-01",
     deprecated = false,
     authentication = true,
     model = School::class
 )
-class SchoolApi {
+interface SchoolApi {
     // Implementation of the service
 }

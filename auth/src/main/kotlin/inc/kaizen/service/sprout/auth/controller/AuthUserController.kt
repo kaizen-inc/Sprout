@@ -8,7 +8,6 @@ import inc.kaizen.service.sprout.base.extension.closureWithReturn
 import inc.kaizen.service.sprout.base.service.IService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -49,9 +48,9 @@ class AuthUserController: IController<AuthUser> {
 
     // Check the authority to access the user
     @DeleteMapping("/persons/{id}")
-    override fun deleteById(@PathVariable("id") id: String): ResponseEntity<Any> {
+    override fun deleteById(@PathVariable("id") ids: Array<out String>): ResponseEntity<Any> {
         return closureWithReturn {
-            return@closureWithReturn authUserService.deleteById(id)
+            return@closureWithReturn authUserService.deleteById(ids)
         }
     }
 
@@ -64,9 +63,9 @@ class AuthUserController: IController<AuthUser> {
 
     // Check the authority to access the user
     @GetMapping("/persons/{id}")
-    override fun findById(@PathVariable("id") id: String): ResponseEntity<Any> {
+    override fun findById(@PathVariable("id") ids: Array<out String>): ResponseEntity<Any> {
         return closureWithReturn {
-            return@closureWithReturn authUserService.findById(id)
+            return@closureWithReturn authUserService.findById(ids)
         }
     }
 

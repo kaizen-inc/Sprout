@@ -1,6 +1,7 @@
 package inc.kaizen.service.sprout.annotation
 
 import kotlin.annotation.AnnotationTarget.*
+import kotlin.reflect.KClass
 
 @Target(CLASS, FIELD)
 annotation class Model(
@@ -13,6 +14,7 @@ annotation class Model(
     val since: String,
     val deprecated: Boolean = false,
     val version: String,
+    val api: KClass<*>
 )
 
 @Target(FIELD)

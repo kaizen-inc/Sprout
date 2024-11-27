@@ -9,8 +9,10 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import inc.kaizen.service.sprout.annotation.API
 import inc.kaizen.service.sprout.annotation.Model
+import inc.kaizen.service.sprout.annotation.Request
 import inc.kaizen.service.sprout.base.extension.nonNullify
 import inc.kaizen.service.sprout.extension.findArgumentByName
+import inc.kaizen.service.sprout.generator.EXTENSION_METHODS
 import inc.kaizen.service.sprout.generator.MODEL_PACKAGE_NAME
 import inc.kaizen.service.sprout.generator.impl.*
 import kotlin.collections.set
@@ -68,6 +70,10 @@ class APIAnnotationProcessor(private val environment: SymbolProcessorEnvironment
                 .toMutableMap()
 
             extensions[MODEL_PACKAGE_NAME] = (apiAnnotation.findArgumentByName("model")?.value as? KSType)?.declaration?.packageName?.asString() ?: ""
+            extensions[EXTENSION_METHODS] = element
+                .getAllFunctions()
+                .filter { function -> function.annotations.any { it.shortName.asString() == Request::class.simpleName } }
+                .toList()
 
             generators.forEach { generator ->
                 environment.logger.info("Generating ${generator::class.simpleName}")
@@ -105,6 +111,12 @@ class APIAnnotationProcessor(private val environment: SymbolProcessorEnvironment
 
             extensions["model"] = element.asStarProjectedType().declaration
             extensions[MODEL_PACKAGE_NAME] = element.packageName.asString()
+
+            val apiClass = (modelAnnotation.findArgumentByName("api")?.value as? KSType)?.declaration as KSClassDeclaration
+            extensions[EXTENSION_METHODS] = apiClass
+                .getAllFunctions()
+                .filter { function -> function.annotations.any { it.shortName.asString() == Request::class.simpleName } }
+                .toList()
 
             generators.forEach { generator ->
                 environment.logger.info("Generating ${generator::class.simpleName}")

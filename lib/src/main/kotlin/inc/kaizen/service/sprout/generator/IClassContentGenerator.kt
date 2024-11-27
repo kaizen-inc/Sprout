@@ -11,6 +11,8 @@ val SERVICE_NAME = "serviceName"
 val CLASS_NAME = "className"
 val FILE_PATH = "filePath"
 val MODEL_PACKAGE_NAME = "modelPackageName"
+val PARENT_PATHS = "parents"
+val EXTENSION_METHODS = "extensionMethods"
 
 interface IClassContentGenerator {
 

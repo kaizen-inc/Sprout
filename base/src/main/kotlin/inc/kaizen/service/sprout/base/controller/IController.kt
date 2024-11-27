@@ -1,6 +1,7 @@
 package inc.kaizen.service.sprout.base.controller
 
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 
 interface IController<T> {
 
@@ -8,13 +9,13 @@ interface IController<T> {
     fun create(t: T): ResponseEntity<Any>
 
     @Throws(Exception::class)
-    fun deleteById(id: String): ResponseEntity<Any>
+    fun deleteById(@PathVariable id: Array<out String>): ResponseEntity<Any>
 
     @Throws(Exception::class)
     fun update(t: T): ResponseEntity<Any>
 
     @Throws(Exception::class)
-    fun findById(id: String): ResponseEntity<Any>
+    fun findById(@PathVariable id: Array<out String>): ResponseEntity<Any>
 
     @Throws(Exception::class)
     fun findAll(
