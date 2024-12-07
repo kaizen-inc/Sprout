@@ -1,7 +1,9 @@
 package inc.kaizen.service.sprout.generator.impl
 
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import inc.kaizen.service.sprout.annotation.Request
 import inc.kaizen.service.sprout.extension.capitalizeFirstLetter
+import inc.kaizen.service.sprout.extension.findArgumentByName
 import inc.kaizen.service.sprout.generator.*
 
 class RepositoryClassGenerator: IClassContentGenerator {
@@ -25,8 +27,18 @@ class RepositoryClassGenerator: IClassContentGenerator {
         appendLine("interface ${className}: JpaRepository<${capitalizeServiceName}Entity, UUID> {")
         extensionFunctions.forEach { function ->
             appendLine()
-            if (function is KSFunctionDeclaration)
-                appendLine(toRequestMapping(function))
+            if (function is KSFunctionDeclaration) {
+                val customServiceImplementation = function.annotations
+                    .find { it.shortName.asString() == Request::class.simpleName }
+                    ?.let { annotation ->
+                        annotation.findArgumentByName("repositoryMethod")?.value
+                    }
+                if (customServiceImplementation != null && customServiceImplementation.toString().isNotEmpty()) {
+                    appendLine("  ${customServiceImplementation}")
+                } else {
+                    appendLine(toRequestMapping(function))
+                }
+            }
         }
         appendLine("}")
     }

@@ -1,7 +1,9 @@
 package inc.kaizen.service.sprout.generator.impl
 
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import inc.kaizen.service.sprout.annotation.Request
 import inc.kaizen.service.sprout.extension.capitalizeFirstLetter
+import inc.kaizen.service.sprout.extension.findArgumentByName
 import inc.kaizen.service.sprout.generator.*
 
 class ServiceClassGenerator: IClassContentGenerator {
@@ -95,8 +97,18 @@ class ServiceClassGenerator: IClassContentGenerator {
         appendLine("    }")
         extensionFunctions.forEach { function ->
             appendLine()
-            if (function is KSFunctionDeclaration)
-                appendLine(toRequestMapping(function, serviceName))
+            if (function is KSFunctionDeclaration) {
+                val customServiceImplementation = function.annotations
+                    .find { it.shortName.asString() == Request::class.simpleName }
+                    ?.let { annotation ->
+                        annotation.findArgumentByName("serviceMethod")?.value
+                    }
+                if (customServiceImplementation != null && customServiceImplementation.toString().isNotEmpty()) {
+                    appendLine(customServiceImplementation.toString()) //TODO: format this code, it's ugly
+                } else {
+                    appendLine(toRequestMapping(function, serviceName))
+                }
+            }
         }
         appendLine("}")
         appendLine()
@@ -108,14 +120,12 @@ class ServiceClassGenerator: IClassContentGenerator {
         return buildString {
             appendLine("  fun ${function}(")
             function.parameters.forEachIndexed { index, parameter ->
-                appendLine("    ${parameter}: ${parameter.type}")
-                if (index < function.parameters.size - 1) appendLine(",")
+                appendLine("    ${parameter}: ${parameter.type}${if (index < function.parameters.size - 1) "," else ""}")
             }
             appendLine("  ): ${function.returnType} {")
             appendLine("    val entity = ${serviceName}Repository.${function}(")
             function.parameters.forEachIndexed { index, parameter ->
-                appendLine("      ${parameter} = ${parameter}")
-                if (index < function.parameters.size - 1) appendLine(",")
+                appendLine("      ${parameter} = ${parameter}${if (index < function.parameters.size - 1) "," else ""}")
             }
             appendLine("    )")
             appendLine("    return ${serviceName}EntityService.convert(entity)")

@@ -1,9 +1,11 @@
 package inc.kaizen.service.sprout.generator.impl
 
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSType
 import inc.kaizen.service.sprout.annotation.Request
 import inc.kaizen.service.sprout.extension.capitalizeFirstLetter
 import inc.kaizen.service.sprout.generator.*
+import java.util.Locale
 
 class ControllerClassGenerator: IClassContentGenerator {
 
@@ -128,21 +130,28 @@ class ControllerClassGenerator: IClassContentGenerator {
             .toMutableMap()
 
         val path = extensions["path"] as String
+        val method = (extensions["method"] as KSType).declaration.simpleName.asString()
+        val serviceMethod = extensions["serviceMethod"] as String?
 
         return buildString {
-            appendLine("    @GetMapping(\"$path\")")
+            appendLine("    @${method.lowercase(Locale.getDefault()).capitalizeFirstLetter()}Mapping(\"$path\")")
             appendLine("    fun ${simpleName.asString()}(")
-            parameters.forEach { parameter ->
-                appendLine("        @PathVariable ${parameter}: ${parameter.type}")
+            parameters.forEachIndexed { index, parameter ->
+                appendLine("        @PathVariable ${parameter}: ${parameter.type}${if (index < parameters.size - 1) "," else ""}")
+
             }
             appendLine("    ): ResponseEntity<Any> {")
             appendLine("        return closureWithReturn {")
-            appendLine("            return@closureWithReturn ${serviceName}Service.${simpleName.asString()}(")
+
+            val serviceMethodname = if (serviceMethod != null && serviceMethod.isNotEmpty()) {
+                val serviceMethodName = serviceMethod.substringAfter("fun ").substringBefore("(")
+                "${serviceName}Service.${serviceMethodName}"
+            } else {
+                "${serviceName}Service.${simpleName.asString()}"
+            }
+            appendLine("            return@closureWithReturn ${serviceMethodname}(")
             parameters.forEachIndexed { index, parameter ->
-                appendLine("                ${parameter} = ${parameter}")
-                if (index < parameters.size - 1) {
-                    appendLine(",")
-                }
+                appendLine("                ${parameter} = ${parameter}${if (index < parameters.size - 1) "," else ""}")
             }
             appendLine("            )")
             appendLine("        }")

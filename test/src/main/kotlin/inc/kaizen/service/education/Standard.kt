@@ -35,7 +35,19 @@ data class Standard(
     model = Standard::class
 )
 interface StandardApi {
+    companion object {
+        const val serviceMethod = """fun getStandardBySchool(name: String): Standard { 
+val standardEntity = standardRepository.getStandardRepository(name)
+return standardEntityService.convert(standardEntity)
+}"""
+        const val repositoryMethod = """fun getStandardRepository(name: String): StandardEntity"""
+    }
 
-    @Request(method = Method.GET, path = "/{name}")
+    @Request(
+        method = Method.GET,
+        path = "/{name}",
+        serviceMethod = serviceMethod,
+        repositoryMethod = repositoryMethod
+    )
     fun getStandardBySchoolName(name: String): Standard
 }
