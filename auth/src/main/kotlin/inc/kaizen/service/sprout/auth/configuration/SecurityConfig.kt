@@ -8,6 +8,7 @@ import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.SecurityContext
 import inc.kaizen.service.sprout.auth.service.AuthUserService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
@@ -20,6 +21,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.jwt.*
 import org.springframework.security.web.SecurityFilterChain
+import java.util.Optional
 
 
 @Configuration
@@ -32,6 +34,12 @@ open class SecurityConfig {
 
     @Autowired
     private lateinit var keyProperty: RsaKeyProperty
+
+    @Value("\${springdoc.api-docs.path:#{null}}")
+    private lateinit var apiDocsPath: Optional<String>
+
+    @Value("\${springdoc.swagger-ui.path:#{null}}")
+    private lateinit var swaggerUiPath: Optional<String>
 
     @Bean
     open fun authProvider(passwordEncoder: PasswordEncoder): DaoAuthenticationProvider {
@@ -48,13 +56,19 @@ open class SecurityConfig {
             .csrf { csrf -> csrf.disable() }
             .cors { cors -> cors.disable() }
             .authorizeHttpRequests { authorize ->
+                val apiDocs = if (apiDocsPath.isPresent) "${apiDocsPath}/**" else "/v3/api-docs/**"
+                val apiDocsYaml = if (apiDocsPath.isPresent) "${apiDocsPath}.yaml" else "/v3/api-docs.yaml"
                 authorize
                     .requestMatchers("/ping").permitAll()
                     .requestMatchers("/user/**").permitAll()
-                    .requestMatchers("/v3/**").permitAll()
-                    .requestMatchers("/api-docs").permitAll()
+                    .requestMatchers(apiDocs).permitAll()
+                    .requestMatchers(apiDocs).permitAll()
+                    .requestMatchers(apiDocsYaml).permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
-                    .anyRequest().authenticated()
+
+                if (swaggerUiPath.isPresent)
+                    authorize.requestMatchers("${swaggerUiPath}/**").permitAll()
+                authorize.anyRequest().authenticated()
             }
             .sessionManagement { sessionManagement ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
