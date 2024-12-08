@@ -132,16 +132,17 @@ class ControllerClassGenerator: IClassContentGenerator {
         val path = extensions["path"] as String
         val method = (extensions["method"] as KSType).declaration.simpleName.asString()
         val serviceMethod = extensions["serviceMethod"] as String?
+        val expectResponse = extensions["expectResponse"] as Boolean
 
         return buildString {
             appendLine("    @${method.lowercase(Locale.getDefault()).capitalizeFirstLetter()}Mapping(\"$path\")")
             appendLine("    fun ${simpleName.asString()}(")
             parameters.forEachIndexed { index, parameter ->
                 appendLine("        @PathVariable ${parameter}: ${parameter.type}${if (index < parameters.size - 1) "," else ""}")
-
             }
             appendLine("    ): ResponseEntity<Any> {")
-            appendLine("        return closureWithReturn {")
+            val returnCall = if (expectResponse) "closureWithReturn" else "closureWithoutReturn"
+            appendLine("        return $returnCall {")
 
             val serviceMethodname = if (serviceMethod != null && serviceMethod.isNotEmpty()) {
                 val serviceMethodName = serviceMethod.substringAfter("fun ").substringBefore("(")
@@ -149,7 +150,8 @@ class ControllerClassGenerator: IClassContentGenerator {
             } else {
                 "${serviceName}Service.${simpleName.asString()}"
             }
-            appendLine("            return@closureWithReturn ${serviceMethodname}(")
+            val returnStatement = if (expectResponse) "return@closureWithReturn" else ""
+            appendLine("            $returnStatement ${serviceMethodname}(")
             parameters.forEachIndexed { index, parameter ->
                 appendLine("                ${parameter} = ${parameter}${if (index < parameters.size - 1) "," else ""}")
             }

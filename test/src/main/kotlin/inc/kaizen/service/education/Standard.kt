@@ -46,6 +46,7 @@ return standardEntityService.convert(standardEntity)
     @Request(
         method = Method.GET,
         path = "/{name}",
+        expectResponse = true,
         serviceMethod = serviceMethod,
         repositoryMethod = repositoryMethod
     )

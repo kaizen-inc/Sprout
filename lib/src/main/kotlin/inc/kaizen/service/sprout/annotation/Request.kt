@@ -6,6 +6,7 @@ import kotlin.annotation.AnnotationTarget.*
 annotation class Request(
     val method: Method,
     val path: String,
+    val expectResponse: Boolean = true,
     val serviceMethod: String = "",
     val repositoryMethod: String = "",
 //    val controllerMethod: String = "" // should this be supported?
