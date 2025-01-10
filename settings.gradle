@@ -5,6 +5,5 @@ rootProject.name = 'sprout'
 include ':base'
 include ':auth'
 include ':lib'
+include ':doc'
 include ':test'
-include 'doc'
-

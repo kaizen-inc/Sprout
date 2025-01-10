@@ -1,11 +1,13 @@
 package inc.kaizen.service.sprout.generator.impl
 
+import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import inc.kaizen.service.sprout.extension.findComplexType
 import inc.kaizen.service.sprout.extension.findIdField
 import inc.kaizen.service.sprout.extension.getProperties
 import inc.kaizen.service.sprout.extension.toCamelCase
 import inc.kaizen.service.sprout.generator.*
+import java.util.Date
 
 class EntityClassGenerator: IClassContentGenerator {
 
@@ -25,6 +27,7 @@ class EntityClassGenerator: IClassContentGenerator {
         appendLine("import java.util.*")
         appendLine("import jakarta.persistence.*")
         appendLine("import inc.kaizen.service.sprout.base.model.entity.BaseEntity")
+        appendLine("import $basePackageName.*")
         complexFields.iterator().forEach {
             appendLine("import $basePackageName.${it.type.toString().toCamelCase()}.model.entity.${it.type}Entity")
         }
@@ -46,7 +49,17 @@ class EntityClassGenerator: IClassContentGenerator {
                 appendLine("    @JoinColumn(name = \"${it.type.toString().toCamelCase()}\")")
                 appendLine("    val ${it}: ${it.type}Entity,")
             } else {
-                appendLine("    val ${it}: ${it.type},")
+                val declaration = it.type.resolve().declaration
+                if (declaration is KSClassDeclaration &&
+                    declaration.classKind == ClassKind.ENUM_CLASS) {
+                    appendLine("    @Enumerated(EnumType.STRING)")
+                    appendLine("    val ${it}: ${it.type},")
+                } else if (it.type.resolve().declaration.qualifiedName?.asString() == "java.util.Date") {
+                    appendLine("    @Temporal(TemporalType.TIMESTAMP)")
+                    appendLine("    val ${it}: ${it.type},")
+                } else {
+                    appendLine("    val ${it}: ${it.type},")
+                }
             }
         }
         appendLine("): BaseEntity()")

@@ -5,15 +5,32 @@ plugins {
     id 'com.google.devtools.ksp' version '2.0.20-1.0.24'
 }
 
+repositories {
+    mavenCentral()
+}
+
 subprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'com.google.devtools.ksp'
+    if (!it.name.startsWith('test')) {
+        apply plugin: 'maven-publish'
+    }
 
-    group = 'inc.kaizen.service'
-    version = '1.0-SNAPSHOT'
+    group = 'inc.kaizen.service.sprout'
+    version = '1.0'
 
     repositories {
         mavenCentral()
+    }
+
+    if (!it.name.startsWith('test')) {
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    from components.java
+                }
+            }
+        }
     }
 
 //    dependencies {

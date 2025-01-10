@@ -12,6 +12,7 @@ import inc.kaizen.service.sprout.annotation.API
 import inc.kaizen.service.sprout.annotation.Model
 import inc.kaizen.service.sprout.annotation.Request
 import inc.kaizen.service.sprout.base.extension.nonNullify
+import inc.kaizen.service.sprout.creator.impl.RequestFlowCreator
 import inc.kaizen.service.sprout.extension.findArgumentByName
 import inc.kaizen.service.sprout.generator.EXTENSION_METHODS
 import inc.kaizen.service.sprout.generator.MODEL_PACKAGE_NAME
@@ -19,16 +20,16 @@ import inc.kaizen.service.sprout.generator.impl.*
 import kotlin.collections.set
 import kotlin.reflect.KClass
 
-class APIAnnotationProcessor(private val environment: SymbolProcessorEnvironment) : SymbolProcessor {
+class SproutAnnotationProcessor(private val environment: SymbolProcessorEnvironment) : SymbolProcessor {
     @OptIn(KspExperimental::class)
     override fun process(resolver: Resolver): List<KSAnnotated> {
         environment.logger.info("Module: ${resolver.getModuleName().asString()}")
-        val models = resolver.getSymbolsWithAnnotation(Model::class.qualifiedName!!)
-        models.filterIsInstance<KSClassDeclaration>().forEach { element ->
-            environment.logger.info("Processing ${element.simpleName.asString()}")
-            println("Processing ${element.simpleName.asString()}")
-            processModelAnnotation(element, resolver)
-        }
+//        val models = resolver.getSymbolsWithAnnotation(Model::class.qualifiedName!!)
+//        models.filterIsInstance<KSClassDeclaration>().forEach { element ->
+//            environment.logger.info("Processing ${element.simpleName.asString()}")
+//            println("Processing ${element.simpleName.asString()}")
+//            processModelAnnotation(element, resolver)
+//        }
 
         val symbols = resolver.getSymbolsWithAnnotation(API::class.qualifiedName!!)
         symbols.filterIsInstance<KSClassDeclaration>().forEach { element ->
@@ -36,16 +37,11 @@ class APIAnnotationProcessor(private val environment: SymbolProcessorEnvironment
             println("Processing ${element.simpleName.asString()}")
             processAPIAnnotation(element, resolver)
         }
-
         return emptyList()
     }
 
     private fun processAPIAnnotation(element: KSClassDeclaration, resolver: Resolver) {
-//        val generators = ServiceLoader.load(IClassContentGenerator::class.java).toList()
-        val generators = listOf(
-            ControllerClassGenerator(),
-        )
-
+        val requestFlowCreator = RequestFlowCreator()
         element.annotations.find { it.shortName.asString() == API::class.simpleName }.let { annotation ->
             val apiAnnotation = annotation.nonNullify()
             environment.logger.info("Processing API annotation: ${apiAnnotation.shortName.asString()}")
@@ -77,10 +73,7 @@ class APIAnnotationProcessor(private val environment: SymbolProcessorEnvironment
                 .filter { function -> function.annotations.any { it.shortName.asString() == Request::class.simpleName } }
                 .toList()
 
-            generators.forEach { generator ->
-                environment.logger.info("Generating ${generator::class.simpleName}")
-                generator.generate(environment, extensions)
-            }
+            requestFlowCreator.flow(environment, extensions)
         }
     }
 
