@@ -13,7 +13,6 @@ class RepositoryGetHook: IMethodHook {
         methodRequest: MethodRequest,
         extensions: Map<String, Any>
     ): FunSpec.Builder {
-        val serviceName = extensions["serviceName"] as String
         return FunSpec.builder("get")
             .addModifiers(KModifier.OVERRIDE)
             .addParameter("id", Long::class)

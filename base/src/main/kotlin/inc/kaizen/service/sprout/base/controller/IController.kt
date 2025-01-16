@@ -15,7 +15,7 @@ interface IController<T> {
     fun update(t: T): ResponseEntity<Any>
 
     @Throws(Exception::class)
-    fun findById(@PathVariable id: Array<out String>): ResponseEntity<Any>
+    fun findById(@PathVariable ids: Array<out String>): ResponseEntity<Any>
 
     @Throws(Exception::class)
     fun findAll(

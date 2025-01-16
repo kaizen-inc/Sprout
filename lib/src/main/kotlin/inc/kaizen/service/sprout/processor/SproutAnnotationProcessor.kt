@@ -59,15 +59,35 @@ class SproutAnnotationProcessor(private val environment: SymbolProcessorEnvironm
                 }
             }
 
-            val extensions = apiAnnotation
+            val extensions = mutableMapOf<String, Any>()
+
+            val apiExtensions = apiAnnotation
                 .arguments
                 .associate { it.name?.asString() to it.value }
                 .filterValues { it != null }
                 .mapValues { it.value!! }
                 .mapKeys { it.key!! }
                 .toMutableMap()
+            extensions.putAll(apiExtensions)
 
-            extensions[MODEL_PACKAGE_NAME] = (apiAnnotation.findArgumentByName("model")?.value as? KSType)?.declaration?.packageName?.asString() ?: ""
+            val model = apiAnnotation.findArgumentByName("model")?.value as? KSType
+            extensions["model"] = model?.starProjection()?.declaration as KSClassDeclaration
+            model
+                .declaration
+                .annotations
+                .find { it.shortName.asString() == Model::class.simpleName }
+                ?.let {
+                    val modelExtensions = it
+                        .arguments
+                        .associate { it.name?.asString() to it.value }
+                        .filterValues { it != null }
+                        .mapValues { it.value!! }
+                        .mapKeys { it.key!! }
+                        .toMutableMap()
+                    extensions.putAll(modelExtensions)
+                }
+
+            extensions[MODEL_PACKAGE_NAME] = model.declaration.packageName.asString()
             extensions[EXTENSION_METHODS] = element
                 .getAllFunctions()
                 .filter { function -> function.annotations.any { it.shortName.asString() == Request::class.simpleName } }

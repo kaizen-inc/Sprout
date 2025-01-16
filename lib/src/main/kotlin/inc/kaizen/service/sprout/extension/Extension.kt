@@ -17,6 +17,10 @@ fun String.toCamelCase(): String {
     return CaseUtils.toCamelCase(this, false)
 }
 
+fun String.plural(): String {
+    return this + "s"
+}
+
 fun String.capitalizeFirstLetter(): String {
     return this.replaceFirstChar { it.uppercase() }
 }

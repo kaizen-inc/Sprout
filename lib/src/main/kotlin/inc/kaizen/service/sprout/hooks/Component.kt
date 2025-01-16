@@ -4,5 +4,6 @@ enum class Component {
     CONTROLLER,
     SERVICE,
     REPOSITORY,
-//    ENTITY
+    CONVERTER,
+    ENTITY
 }
