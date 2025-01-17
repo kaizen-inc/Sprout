@@ -32,7 +32,7 @@ data class MethodRequest(
         val GET: MethodRequest = MethodRequest(RequestMethod.GET, "findById", GetMapping::class)
         val POST: MethodRequest = MethodRequest(RequestMethod.POST, "create", PostMapping::class)
         val PUT: MethodRequest = MethodRequest(RequestMethod.PUT, "update", PutMapping::class)
-        val DELETE: MethodRequest = MethodRequest(RequestMethod.DELETE, "delete", DeleteMapping::class)
+        val DELETE: MethodRequest = MethodRequest(RequestMethod.DELETE, "deleteById", DeleteMapping::class)
         val GET_ALL: MethodRequest = MethodRequest(RequestMethod.GET, "findAll", GetMapping::class)
     }
 }

@@ -1,7 +1,6 @@
 package inc.kaizen.service.sprout.hooks.method.impl
 
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import inc.kaizen.service.sprout.annotation.MethodRequest
 import inc.kaizen.service.sprout.extension.capitalizeFirstLetter
@@ -11,7 +10,7 @@ import inc.kaizen.service.sprout.hooks.Component
 import inc.kaizen.service.sprout.hooks.method.IMethodHook
 import java.util.UUID
 
-class ServiceGetHook: IMethodHook {
+class ServiceGetMethodHook: IMethodHook {
 
     override fun hook(
         component: Component,
@@ -20,14 +19,16 @@ class ServiceGetHook: IMethodHook {
     ): FunSpec.Builder {
         val serviceName = extensions[SERVICE_NAME] as String
         val capitalizeServiceName = serviceName.capitalizeFirstLetter()
-        val modelPakageName = extensions[MODEL_PACKAGE_NAME] as String
-
+        val modelPackageName = extensions[MODEL_PACKAGE_NAME] as String
+        val typeName = Array::class.asClassName()
+            .parameterizedBy(WildcardTypeName.producerOf(UUID::class.asClassName()))
         val className = ClassName("org.springframework.context.i18n", "LocaleContextHolder")
         return FunSpec
-            .builder("findById")
-            .addParameter("ids", Array::class.parameterizedBy(UUID::class))
-            .returns(ClassName(modelPakageName, capitalizeServiceName))
-            .addStatement("val optional = ${serviceName}Repository.findById(ids.last())")
+            .builder(methodRequest.functionName)
+            .addModifiers(KModifier.OVERRIDE)
+            .addParameter("ids", typeName)
+            .returns(ClassName(modelPackageName, capitalizeServiceName))
+            .addStatement("val optional = ${serviceName}Repository.${methodRequest.functionName}(ids.last())")
             .addStatement("if (optional.isPresent) {")
             .addStatement("    return ${serviceName}EntityService.convert(optional.get())")
             .addStatement("} else {")

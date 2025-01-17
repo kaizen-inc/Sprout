@@ -35,7 +35,7 @@ data class Student(
     since = "2023-10-01",
     deprecated = false,
     authentication = true,
-    model = School::class
+    model = Student::class
 )
 interface StudentApi {
     // Implementation of the service

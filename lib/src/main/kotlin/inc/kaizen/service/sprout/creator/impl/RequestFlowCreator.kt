@@ -15,7 +15,7 @@ import inc.kaizen.service.sprout.hooks.Component
 import inc.kaizen.service.sprout.hooks.file.IClassHook
 import inc.kaizen.service.sprout.hooks.file.impl.*
 import inc.kaizen.service.sprout.hooks.method.IMethodHook
-import inc.kaizen.service.sprout.hooks.method.impl.ServiceGetHook
+import inc.kaizen.service.sprout.hooks.method.impl.*
 
 class RequestFlowCreator: IRequestFlowCreator {
 
@@ -32,10 +32,29 @@ class RequestFlowCreator: IRequestFlowCreator {
 
 
         val controllerMethodHooks = mutableMapOf<Component, IMethodHook>()
-        controllerMethodHooks[Component.CONTROLLER] = ControllerGetHook()
-        controllerMethodHooks[Component.SERVICE] = ServiceGetHook()
-//        controllerMethodHooks[Component.REPOSITORY] = RepositoryGetHook()
+        controllerMethodHooks[Component.CONTROLLER] = ControllerGetMethodHook()
+        controllerMethodHooks[Component.SERVICE] = ServiceGetMethodHook()
         methodHooks[MethodRequest.GET] = controllerMethodHooks
+
+        val controllerPostMethodHooks = mutableMapOf<Component, IMethodHook>()
+        controllerPostMethodHooks[Component.CONTROLLER] = ControllerPostMethodHook()
+        controllerPostMethodHooks[Component.SERVICE] = ServicePostMethodHook()
+        methodHooks[MethodRequest.POST] = controllerPostMethodHooks
+
+        val controllerPutMethodHooks = mutableMapOf<Component, IMethodHook>()
+        controllerPutMethodHooks[Component.CONTROLLER] = ControllerPutMethodHook()
+        controllerPutMethodHooks[Component.SERVICE] = ServicePutMethodHook()
+        methodHooks[MethodRequest.PUT] = controllerPutMethodHooks
+
+        val controllerDeleteMethodHooks = mutableMapOf<Component, IMethodHook>()
+        controllerDeleteMethodHooks[Component.CONTROLLER] = ControllerDeleteMethodHook()
+        controllerDeleteMethodHooks[Component.SERVICE] = ServiceDeleteMethodHook()
+        methodHooks[MethodRequest.DELETE] = controllerDeleteMethodHooks
+
+        val controllerGetManyMethodHooks = mutableMapOf<Component, IMethodHook>()
+        controllerGetManyMethodHooks[Component.CONTROLLER] = ControllerGetManyMethodHook()
+        controllerGetManyMethodHooks[Component.SERVICE] = ServiceGetManyMethodHook()
+        methodHooks[MethodRequest.GET_ALL] = controllerGetManyMethodHooks
     }
 
     override fun flow(environment: SymbolProcessorEnvironment, extensions: Map<String, Any>) {
@@ -58,8 +77,14 @@ class RequestFlowCreator: IRequestFlowCreator {
             initialize(component, tempExtensions)
         }
 
-//        val methodRequests = arrayOf(MethodRequest.GET, MethodRequest.POST, MethodRequest.PUT, MethodRequest.DELETE, MethodRequest.GET_ALL)
-        val methodRequests = arrayOf(MethodRequest.GET)
+        val methodRequests = arrayOf(
+            MethodRequest.GET,
+            MethodRequest.POST,
+            MethodRequest.PUT,
+            MethodRequest.DELETE,
+            MethodRequest.GET_ALL
+        )
+
         methodRequests.forEach { methodRequest ->
             components.forEach { component ->
                 val classSpecs = componentToTypeMapping[component]
@@ -103,7 +128,7 @@ class RequestFlowCreator: IRequestFlowCreator {
             if (typeSpecs == null)
                 throw Exception("Class is missing for component: ${component}")
 
-            typeSpecs.forEach { typeSpecBuilder, callHooks ->
+            typeSpecs.forEach { typeSpecBuilder, _ ->
                 val typeSpec = typeSpecBuilder.build()
                 val className = typeSpec.name
 

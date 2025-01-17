@@ -6,15 +6,12 @@ import inc.kaizen.service.sprout.hooks.method.IMethodHook
 import inc.kaizen.service.sprout.hooks.Component
 import inc.kaizen.service.sprout.annotation.MethodRequest
 import inc.kaizen.service.sprout.base.service.IService
-import inc.kaizen.service.sprout.extension.capitalizeFirstLetter
-import inc.kaizen.service.sprout.extension.toCamelCase
 import inc.kaizen.service.sprout.generator.SERVICE_NAME
 import inc.kaizen.service.sprout.generator.SERVICE_NAME_PLURAL
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 
-class ControllerGetManyHook: IMethodHook {
+class ControllerGetManyMethodHook: IMethodHook {
 
     override fun hook(
         component: Component,
@@ -23,7 +20,7 @@ class ControllerGetManyHook: IMethodHook {
     ): FunSpec.Builder {
         val serviceName = extensions[SERVICE_NAME] as String
         val servicePluralName = extensions[SERVICE_NAME_PLURAL] as String
-
+        val closureWithReturn = MemberName("inc.kaizen.service.sprout.base.extension", "closureWithReturn")
         return FunSpec
             .builder(methodRequest.functionName)
             .addAnnotation(AnnotationSpec
@@ -46,8 +43,11 @@ class ControllerGetManyHook: IMethodHook {
                     .build())
                 .build())
             .returns(ResponseEntity::class.asTypeName().parameterizedBy(Any::class.asTypeName()))
-            .addStatement("return closureWithReturn {")
-            .addStatement("    return@closureWithReturn ${serviceName}Service.${methodRequest.functionName}(page, pageSize)")
-            .addStatement("}")
+            .addCode(CodeBlock
+                .builder()
+                .add("return %M {", closureWithReturn)
+                .addStatement("    return@closureWithReturn ${serviceName}Service.${methodRequest.functionName}(page, pageSize)")
+                .add("}")
+                .build())
     }
 }

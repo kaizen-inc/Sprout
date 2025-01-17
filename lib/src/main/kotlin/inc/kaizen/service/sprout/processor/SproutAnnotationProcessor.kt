@@ -44,7 +44,7 @@ class SproutAnnotationProcessor(private val environment: SymbolProcessorEnvironm
         val requestFlowCreator = RequestFlowCreator()
         element.annotations.find { it.shortName.asString() == API::class.simpleName }.let { annotation ->
             val apiAnnotation = annotation.nonNullify()
-            environment.logger.info("Processing API annotation: ${apiAnnotation.shortName.asString()}")
+            environment.logger.info("Processing API annotation: ${element.simpleName.asString()}")
 
             val modelArgument = apiAnnotation.arguments.find { it.name?.asString() == "model" }
             val modelClass = modelArgument?.value as? KClass<*>
