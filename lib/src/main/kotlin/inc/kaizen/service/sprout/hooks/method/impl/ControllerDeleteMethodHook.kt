@@ -3,8 +3,8 @@ package inc.kaizen.service.sprout.hooks.method.impl
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import inc.kaizen.service.sprout.annotation.MethodRequest
-import inc.kaizen.service.sprout.generator.SERVICE_NAME
-import inc.kaizen.service.sprout.generator.SERVICE_NAME_PLURAL
+import inc.kaizen.service.sprout.constant.SERVICE_NAME
+import inc.kaizen.service.sprout.constant.SERVICE_NAME_PLURAL
 import inc.kaizen.service.sprout.hooks.Component
 import inc.kaizen.service.sprout.hooks.method.IMethodHook
 import org.springframework.http.ResponseEntity

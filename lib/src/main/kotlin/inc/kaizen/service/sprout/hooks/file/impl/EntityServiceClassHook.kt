@@ -1,9 +1,8 @@
 package inc.kaizen.service.sprout.hooks.file.impl
 
 import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import inc.kaizen.service.sprout.extension.capitalizeFirstLetter
-import inc.kaizen.service.sprout.generator.*
+import inc.kaizen.service.sprout.constant.*
 import inc.kaizen.service.sprout.hooks.Component
 import inc.kaizen.service.sprout.hooks.file.IClassHook
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,7 +37,7 @@ class EntityServiceClassHook: IClassHook {
             FunSpec.builder("convert")
                 .addAnnotation(AnnotationSpec.builder(Throws::class).addMember("%T::class", ParseException::class).build())
                 .addParameter(serviceName, ClassName(modelPackageName, capitalizeServiceName))
-                .returns(ClassName("$basePackaageName.$serviceName.entity", "${capitalizeServiceName}Entity"))
+                .returns(ClassName("$basePackaageName.$serviceName.model.entity", "${capitalizeServiceName}Entity"))
                 .addStatement("val ${serviceName}Entity: ${capitalizeServiceName}Entity = " +
                         "conversionService.convert($serviceName, ${capitalizeServiceName}Entity::class.java).%M()", nonNullify)
                 .addStatement("return ${serviceName}Entity")
@@ -47,7 +46,7 @@ class EntityServiceClassHook: IClassHook {
         typeSpecBuilder.addFunction(
             FunSpec.builder("convert")
                 .addAnnotation(AnnotationSpec.builder(Throws::class).addMember("%T::class", ParseException::class).build())
-                .addParameter("entity", ClassName("$basePackaageName.$serviceName.entity", "${capitalizeServiceName}Entity"))
+                .addParameter("entity", ClassName("$basePackaageName.$serviceName.model.entity", "${capitalizeServiceName}Entity"))
                 .returns(ClassName(modelPackageName, capitalizeServiceName))
                 .addStatement("val $serviceName: $capitalizeServiceName = conversionService.convert(entity, $capitalizeServiceName::class.java).%M()", nonNullify)
                 .addStatement("return $serviceName")

@@ -3,8 +3,8 @@ package inc.kaizen.service.sprout.hooks.file.impl
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import inc.kaizen.service.sprout.extension.capitalizeFirstLetter
-import inc.kaizen.service.sprout.generator.MODEL_PACKAGE_NAME
-import inc.kaizen.service.sprout.generator.SERVICE_NAME
+import inc.kaizen.service.sprout.constant.MODEL_PACKAGE_NAME
+import inc.kaizen.service.sprout.constant.SERVICE_NAME
 import inc.kaizen.service.sprout.hooks.Component
 import inc.kaizen.service.sprout.hooks.file.IClassHook
 import java.util.*

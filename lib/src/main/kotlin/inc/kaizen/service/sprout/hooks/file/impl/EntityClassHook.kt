@@ -8,7 +8,7 @@ import inc.kaizen.service.sprout.extension.findComplexType
 import inc.kaizen.service.sprout.extension.findIdField
 import inc.kaizen.service.sprout.extension.getProperties
 import inc.kaizen.service.sprout.extension.toCamelCase
-import inc.kaizen.service.sprout.generator.*
+import inc.kaizen.service.sprout.constant.*
 import inc.kaizen.service.sprout.hooks.Component
 import inc.kaizen.service.sprout.hooks.file.IClassHook
 import jakarta.persistence.Entity
@@ -71,7 +71,7 @@ class EntityClassHook: IClassHook {
             val propertySpec: PropertySpec.Builder
             if (complexFields.contains(it)) {
                 val type = ClassName(
-                    "$basePackageName.${it.type.toString().toCamelCase()}.entity",
+                    "$basePackageName.${it.type.toString().toCamelCase()}.model.entity",
                     declaration.simpleName.asString() + "Entity"
                 )
                 propertySpec = PropertySpec.builder(it.toString(), type).initializer(it.toString())

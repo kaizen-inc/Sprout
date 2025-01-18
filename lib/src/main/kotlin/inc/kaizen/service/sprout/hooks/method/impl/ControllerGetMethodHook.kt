@@ -6,8 +6,8 @@ import inc.kaizen.service.sprout.hooks.method.IMethodHook
 import inc.kaizen.service.sprout.hooks.Component
 import inc.kaizen.service.sprout.annotation.MethodRequest
 import inc.kaizen.service.sprout.extension.toCamelCase
-import inc.kaizen.service.sprout.generator.SERVICE_NAME
-import inc.kaizen.service.sprout.generator.SERVICE_NAME_PLURAL
+import inc.kaizen.service.sprout.constant.SERVICE_NAME
+import inc.kaizen.service.sprout.constant.SERVICE_NAME_PLURAL
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 

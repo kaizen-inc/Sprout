@@ -10,7 +10,7 @@ import inc.kaizen.service.sprout.creator.IRequestFlowCreator
 import inc.kaizen.service.sprout.extension.capitalizeFirstLetter
 import inc.kaizen.service.sprout.extension.plural
 import inc.kaizen.service.sprout.extension.toCamelCase
-import inc.kaizen.service.sprout.generator.*
+import inc.kaizen.service.sprout.constant.*
 import inc.kaizen.service.sprout.hooks.Component
 import inc.kaizen.service.sprout.hooks.file.IClassHook
 import inc.kaizen.service.sprout.hooks.file.impl.*

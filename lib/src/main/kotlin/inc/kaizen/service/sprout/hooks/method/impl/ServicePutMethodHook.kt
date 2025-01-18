@@ -4,7 +4,7 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import inc.kaizen.service.sprout.annotation.MethodRequest
 import inc.kaizen.service.sprout.extension.capitalizeFirstLetter
-import inc.kaizen.service.sprout.generator.*
+import inc.kaizen.service.sprout.constant.*
 import inc.kaizen.service.sprout.hooks.Component
 import inc.kaizen.service.sprout.hooks.method.IMethodHook
 

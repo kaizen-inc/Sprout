@@ -6,8 +6,8 @@ import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
 import inc.kaizen.service.sprout.extension.capitalizeFirstLetter
 import inc.kaizen.service.sprout.extension.toCamelCase
-import inc.kaizen.service.sprout.generator.BASE_PACKAGE_NAME
-import inc.kaizen.service.sprout.generator.SERVICE_NAME
+import inc.kaizen.service.sprout.constant.BASE_PACKAGE_NAME
+import inc.kaizen.service.sprout.constant.SERVICE_NAME
 import inc.kaizen.service.sprout.hooks.Component
 import inc.kaizen.service.sprout.hooks.file.IClassHook
 import java.util.UUID
@@ -28,7 +28,7 @@ class RepositoryClassHook: IClassHook {
             .addSuperinterface(
                 ClassName("org.springframework.data.jpa.repository", "JpaRepository")
                     .parameterizedBy(
-                        ClassName("$basePackaageName.$serviceName.entity", "${modelName}Entity"),
+                        ClassName("$basePackaageName.$serviceName.model.entity", "${modelName}Entity"),
                         UUID::class.asClassName()
                     )
             )

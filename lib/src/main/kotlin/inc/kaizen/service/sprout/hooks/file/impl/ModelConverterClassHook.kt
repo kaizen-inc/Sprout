@@ -5,7 +5,7 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import inc.kaizen.service.sprout.extension.capitalizeFirstLetter
 import inc.kaizen.service.sprout.extension.findComplexType
-import inc.kaizen.service.sprout.generator.*
+import inc.kaizen.service.sprout.constant.*
 import inc.kaizen.service.sprout.hooks.Component
 import inc.kaizen.service.sprout.hooks.file.IClassHook
 import org.mapstruct.Mapper
@@ -36,14 +36,14 @@ class ModelConverterClassHook: IClassHook {
             .addSuperinterface(
                 ClassName("org.springframework.core.convert.converter", "Converter")
                     .parameterizedBy(
-                        ClassName("$basePackaageName.$serviceName.entity", "${capitalizeServiceName}Entity"),
+                        ClassName("$basePackaageName.$serviceName.model.entity", "${capitalizeServiceName}Entity"),
                         ClassName(modelPackageName, capitalizeServiceName)
                     )
             )
             .addFunctions(
                 complexFields.map {
                     FunSpec.builder("fetch${it.type}")
-                        .addParameter("entity", ClassName("$basePackaageName.$serviceName.entity", "${capitalizeServiceName}Entity"))
+                        .addParameter("entity", ClassName("$basePackaageName.$serviceName.model.entity", "${capitalizeServiceName}Entity"))
                         .returns(UUID::class.asClassName())
                         .addStatement("return entity.id")
                         .build()
@@ -52,7 +52,7 @@ class ModelConverterClassHook: IClassHook {
             .addFunction(
                 FunSpec.builder("convert")
                     .addModifiers(KModifier.ABSTRACT, KModifier.OVERRIDE)
-                    .addParameter("entity", ClassName("$basePackaageName.$serviceName.entity", "${capitalizeServiceName}Entity"))
+                    .addParameter("entity", ClassName("$basePackaageName.$serviceName.model.entity", "${capitalizeServiceName}Entity"))
                     .returns(ClassName(modelPackageName, capitalizeServiceName))
                     .build()
             )

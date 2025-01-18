@@ -6,7 +6,7 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.WildcardTypeName
 import com.squareup.kotlinpoet.asClassName
 import inc.kaizen.service.sprout.annotation.MethodRequest
-import inc.kaizen.service.sprout.generator.SERVICE_NAME
+import inc.kaizen.service.sprout.constant.SERVICE_NAME
 import inc.kaizen.service.sprout.hooks.Component
 import inc.kaizen.service.sprout.hooks.method.IMethodHook
 import java.util.UUID

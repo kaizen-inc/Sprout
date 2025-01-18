@@ -14,9 +14,8 @@ import inc.kaizen.service.sprout.annotation.Request
 import inc.kaizen.service.sprout.base.extension.nonNullify
 import inc.kaizen.service.sprout.creator.impl.RequestFlowCreator
 import inc.kaizen.service.sprout.extension.findArgumentByName
-import inc.kaizen.service.sprout.generator.EXTENSION_METHODS
-import inc.kaizen.service.sprout.generator.MODEL_PACKAGE_NAME
-import inc.kaizen.service.sprout.generator.impl.*
+import inc.kaizen.service.sprout.constant.EXTENSION_METHODS
+import inc.kaizen.service.sprout.constant.MODEL_PACKAGE_NAME
 import kotlin.collections.set
 import kotlin.reflect.KClass
 
@@ -24,13 +23,6 @@ class SproutAnnotationProcessor(private val environment: SymbolProcessorEnvironm
     @OptIn(KspExperimental::class)
     override fun process(resolver: Resolver): List<KSAnnotated> {
         environment.logger.info("Module: ${resolver.getModuleName().asString()}")
-//        val models = resolver.getSymbolsWithAnnotation(Model::class.qualifiedName!!)
-//        models.filterIsInstance<KSClassDeclaration>().forEach { element ->
-//            environment.logger.info("Processing ${element.simpleName.asString()}")
-//            println("Processing ${element.simpleName.asString()}")
-//            processModelAnnotation(element, resolver)
-//        }
-
         val symbols = resolver.getSymbolsWithAnnotation(API::class.qualifiedName!!)
         symbols.filterIsInstance<KSClassDeclaration>().forEach { element ->
             environment.logger.info("Processing ${element.simpleName.asString()}")
@@ -94,49 +86,6 @@ class SproutAnnotationProcessor(private val environment: SymbolProcessorEnvironm
                 .toList()
 
             requestFlowCreator.flow(environment, extensions)
-        }
-    }
-
-    private fun processModelAnnotation(element: KSClassDeclaration, resolver: Resolver) {
-        val generators = listOf(
-//            BaseEntityClassGenerator(),
-//            BaseModelClassGenerator(),
-//            ExtensionClassGenerator(),
-//            ServiceInterfaceGenerator(),
-//            ControllerInterfaceGenerator(),
-            ServiceClassGenerator(),
-            RepositoryClassGenerator(),
-            ModelConverterClassGenerator(),
-            EntityConverterClassGenerator(),
-            EntityServiceClassGenerator(),
-            EntityClassGenerator()
-        )
-
-        element.annotations.find { it.shortName.asString() == Model::class.simpleName }.let { annotation ->
-            val modelAnnotation = annotation.nonNullify()
-            environment.logger.info("Processing Model annotation: ${modelAnnotation.shortName.asString()}")
-
-            val extensions = modelAnnotation
-                .arguments
-                .associate { it.name?.asString() to it.value }
-                .filterValues { it != null }
-                .mapValues { it.value!! }
-                .mapKeys { it.key!! }
-                .toMutableMap()
-
-            extensions["model"] = element.asStarProjectedType().declaration
-            extensions[MODEL_PACKAGE_NAME] = element.packageName.asString()
-
-            val apiClass = (modelAnnotation.findArgumentByName("api")?.value as? KSType)?.declaration as KSClassDeclaration
-            extensions[EXTENSION_METHODS] = apiClass
-                .getAllFunctions()
-                .filter { function -> function.annotations.any { it.shortName.asString() == Request::class.simpleName } }
-                .toList()
-
-            generators.forEach { generator ->
-                environment.logger.info("Generating ${generator::class.simpleName}")
-                generator.generate(environment, extensions)
-            }
         }
     }
 }
