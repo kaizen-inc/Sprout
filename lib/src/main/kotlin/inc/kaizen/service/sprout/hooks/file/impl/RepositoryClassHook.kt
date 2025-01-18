@@ -7,7 +7,6 @@ import com.squareup.kotlinpoet.asClassName
 import inc.kaizen.service.sprout.extension.capitalizeFirstLetter
 import inc.kaizen.service.sprout.extension.toCamelCase
 import inc.kaizen.service.sprout.generator.BASE_PACKAGE_NAME
-import inc.kaizen.service.sprout.generator.MODEL_PACKAGE_NAME
 import inc.kaizen.service.sprout.generator.SERVICE_NAME
 import inc.kaizen.service.sprout.hooks.Component
 import inc.kaizen.service.sprout.hooks.file.IClassHook
@@ -25,6 +24,7 @@ class RepositoryClassHook: IClassHook {
 
         return TypeSpec
             .interfaceBuilder("${modelName}Repository")
+            .addAnnotation(ClassName("org.springframework.stereotype", "Repository"))
             .addSuperinterface(
                 ClassName("org.springframework.data.jpa.repository", "JpaRepository")
                     .parameterizedBy(

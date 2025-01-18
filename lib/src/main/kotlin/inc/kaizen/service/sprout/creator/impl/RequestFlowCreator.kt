@@ -63,11 +63,11 @@ class RequestFlowCreator: IRequestFlowCreator {
         val serviceName = extensions[SERVICE_NAME] as String
         tempExtensions[SERVICE_NAME_PLURAL] = serviceName.plural()
 
-        val components = Component.values()
+        val components = Component.entries
         components.forEach { component ->
             val componentName = component.name.lowercase().toCamelCase()
             val className = "${serviceName.toCamelCase().capitalizeFirstLetter()}${componentName.capitalizeFirstLetter()}"
-            val packageName = "$basePackageName.${serviceName.toCamelCase()}.${componentName}"
+            val packageName = "$basePackageName.${serviceName.toCamelCase()}.${component.packageName}"
             val filePath = "${packageName.replace('.', '/')}/$className"
 
             tempExtensions[CLASS_NAME] = className
@@ -116,13 +116,12 @@ class RequestFlowCreator: IRequestFlowCreator {
     }
 
     fun generateFiles(environment: SymbolProcessorEnvironment, extensions: Map<String, Any>) {
-        val components = Component.values()
+        val components = Component.entries
         components.forEach { component ->
             val basePackageName = extensions[BASE_PACKAGE_NAME] as String
             val serviceName = extensions[SERVICE_NAME] as String
 
-            val componentName = component.name.lowercase().toCamelCase()
-            val packageName = "$basePackageName.${serviceName.toCamelCase()}.${componentName}"
+            val packageName = "$basePackageName.${serviceName.toCamelCase()}.${component.packageName}"
 
             val typeSpecs = componentToTypeMapping[component]
             if (typeSpecs == null)

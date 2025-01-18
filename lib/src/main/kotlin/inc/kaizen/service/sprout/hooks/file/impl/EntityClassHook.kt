@@ -31,11 +31,11 @@ class EntityClassHook: IClassHook {
     ): TypeSpec.Builder {
         val serviceName = extensions[SERVICE_NAME] as String
         val className = extensions[CLASS_NAME] as String
+        val basePackageName = extensions[BASE_PACKAGE_NAME] as String
         val schema = extensions["schema"] as String
 
         val modelClass = extensions["model"] as KSClassDeclaration
         val complexFields = modelClass.findComplexType()
-
 
         val typeSpecBuilder = TypeSpec.classBuilder(className)
             .addModifiers(KModifier.DATA)
@@ -67,14 +67,24 @@ class EntityClassHook: IClassHook {
 
         modelClass.getProperties(false).forEach { it ->
             val declaration = it.type.resolve().declaration
-            var propertySpecBuilder = ParameterSpec.builder(it.toString(),
-                ClassName(declaration.packageName.asString(), declaration.simpleName.asString()))
+            val propertySpecBuilder: ParameterSpec.Builder
+            val propertySpec: PropertySpec.Builder
             if (complexFields.contains(it)) {
+                val type = ClassName(
+                    "$basePackageName.${it.type.toString().toCamelCase()}.entity",
+                    declaration.simpleName.asString() + "Entity"
+                )
+                propertySpec = PropertySpec.builder(it.toString(), type).initializer(it.toString())
+                propertySpecBuilder = ParameterSpec.builder(it.toString(), type)
                 propertySpecBuilder.addAnnotation(ManyToOne::class)
                 propertySpecBuilder.addAnnotation(AnnotationSpec.builder(JoinColumn::class)
                     .addMember("name = %S", it.type.toString().toCamelCase())
                     .build())
             } else {
+                val type = ClassName(declaration.packageName.asString(), declaration.simpleName.asString())
+                propertySpecBuilder = ParameterSpec.builder(it.toString(), type)
+                propertySpec = PropertySpec.builder(it.toString(), type).initializer(it.toString())
+
                 if (declaration is KSClassDeclaration && declaration.classKind == ClassKind.ENUM_CLASS) {
                     propertySpecBuilder.addAnnotation(AnnotationSpec.builder(Enumerated::class)
                         .addMember("value = %T.STRING", EnumType::class)
@@ -86,10 +96,7 @@ class EntityClassHook: IClassHook {
                 }
             }
             constructorBuilder.addParameter(propertySpecBuilder.build())
-            typeSpecBuilder.addProperty(PropertySpec
-                .builder(it.toString(), ClassName(declaration.packageName.asString(), declaration.simpleName.asString()))
-                .initializer(it.toString())
-                .build())
+            typeSpecBuilder.addProperty(propertySpec.build())
         }
 
         typeSpecBuilder.primaryConstructor(constructorBuilder.build())
