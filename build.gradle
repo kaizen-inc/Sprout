@@ -25,9 +25,19 @@ subprojects {
 
     if (!it.name.startsWith('test')) {
         publishing {
+            repositories {
+                maven {
+                    name = "GitHubPackages"
+                    url = uri("https://maven.pkg.github.com/kaizen-inc/Sprout")
+                    credentials {
+                        username = System.getenv("GITHUB_ACTOR")?: project.property("GITHUB_ACTOR")
+                        password = System.getenv("GITHUB_TOKEN")?: project.property("GITHUB_TOKEN")
+                    }
+                }
+            }
             publications {
-                mavenJava(MavenPublication) {
-                    from components.java
+                maven(MavenPublication) {
+                    from(components.java)
                 }
             }
         }

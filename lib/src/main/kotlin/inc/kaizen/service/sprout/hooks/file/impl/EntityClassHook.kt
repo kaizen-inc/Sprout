@@ -3,6 +3,7 @@ package inc.kaizen.service.sprout.hooks.file.impl
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import inc.kaizen.service.sprout.base.model.entity.BaseEntity
 import inc.kaizen.service.sprout.extension.findComplexType
 import inc.kaizen.service.sprout.extension.findIdField
@@ -82,8 +83,13 @@ class EntityClassHook: IClassHook {
                     .build())
             } else {
                 val type = ClassName(declaration.packageName.asString(), declaration.simpleName.asString())
+                    .parameterizedBy(it.type.resolve().arguments.map { arg ->
+                        val argDeclaration = arg.type?.resolve()?.declaration
+                        ClassName(argDeclaration?.packageName?.asString() ?: "", argDeclaration?.simpleName?.asString() ?: "")
+                    })
                 propertySpecBuilder = ParameterSpec.builder(it.toString(), type)
-                propertySpec = PropertySpec.builder(it.toString(), type).initializer(it.toString())
+                propertySpec = PropertySpec.builder(it.toString(), type)
+                    .initializer(it.toString())
 
                 if (declaration is KSClassDeclaration && declaration.classKind == ClassKind.ENUM_CLASS) {
                     propertySpecBuilder.addAnnotation(AnnotationSpec.builder(Enumerated::class)

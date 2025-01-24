@@ -18,7 +18,17 @@ fun String.toCamelCase(): String {
 }
 
 fun String.plural(): String {
-    return this + "s"
+    return when {
+        this.endsWith("y", ignoreCase = true) && this.length > 1 && !this[this.length - 2].isVowel() -> this.dropLast(1) + "ies"
+        this.endsWith("s", ignoreCase = true) || this.endsWith("sh", ignoreCase = true) || this.endsWith("ch", ignoreCase = true) -> this + "es"
+        this.endsWith("f", ignoreCase = true) -> this.dropLast(1) + "ves"
+        this.endsWith("fe", ignoreCase = true) -> this.dropLast(2) + "ves"
+        else -> this + "s"
+    }
+}
+
+private fun Char.isVowel(): Boolean {
+    return this.lowercaseChar() in listOf('a', 'e', 'i', 'o', 'u')
 }
 
 fun String.capitalizeFirstLetter(): String {
