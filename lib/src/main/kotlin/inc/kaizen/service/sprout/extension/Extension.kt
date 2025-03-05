@@ -6,15 +6,14 @@ import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSValueArgument
 import inc.kaizen.service.sprout.annotation.Id
 import inc.kaizen.service.sprout.annotation.Reference
-import org.apache.commons.text.CaseUtils
-
 
 fun KSAnnotation.findArgumentByName(argument: String) = arguments.find { it.name?.asString() == argument }
 
 fun KSAnnotation.findArgument(argument: KSValueArgument) = arguments.find { it == argument }
 
 fun String.toCamelCase(): String {
-    return CaseUtils.toCamelCase(this, false)
+//    return CaseUtils.toCamelCase(this, false)
+    return this.lowerCaseFirstLetter()
 }
 
 fun String.plural(): String {
@@ -33,6 +32,10 @@ private fun Char.isVowel(): Boolean {
 
 fun String.capitalizeFirstLetter(): String {
     return this.replaceFirstChar { it.uppercase() }
+}
+
+fun String.lowerCaseFirstLetter(): String {
+    return this.replaceFirstChar { it.lowercase() }
 }
 
 fun KSClassDeclaration.findComplexType(): Sequence<KSPropertyDeclaration> {

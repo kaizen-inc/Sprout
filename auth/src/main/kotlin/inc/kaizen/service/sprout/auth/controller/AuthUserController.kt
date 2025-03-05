@@ -35,7 +35,7 @@ class AuthUserController: IController<AuthUser> {
     @PostMapping("/user/login")
     fun login(): ResponseEntity<Any> {
         return closureWithReturn {
-            val token = tokenService.allocateToken(null)
+            val token = tokenService.allocateToken("User login")
             return@closureWithReturn token.key
         }
     }

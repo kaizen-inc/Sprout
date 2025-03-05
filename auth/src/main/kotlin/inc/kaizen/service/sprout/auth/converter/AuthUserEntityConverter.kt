@@ -5,9 +5,12 @@ import inc.kaizen.service.sprout.auth.model.entity.AuthUserEntity
 import inc.kaizen.service.sprout.base.configuration.MappingConfiguration
 import org.mapstruct.Mapper
 import org.springframework.core.convert.converter.Converter
+import org.springframework.security.core.GrantedAuthority
 
 @Mapper(componentModel = "spring", config = MappingConfiguration::class)
 abstract class AuthUserEntityConverter: Converter<AuthUser, AuthUserEntity> {
 
     abstract override fun convert(entity: AuthUser): AuthUserEntity
+
+    fun map(value: GrantedAuthority): String = value.authority
 }

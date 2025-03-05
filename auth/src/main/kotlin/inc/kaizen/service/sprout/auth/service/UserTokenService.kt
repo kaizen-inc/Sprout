@@ -24,9 +24,9 @@ class UserTokenService: TokenService {
     ): Token {
 //        // Implement token allocation logic here
 //        // This is a placeholder implementation
-//        if (extendedInformation == null || extendedInformation.isEmpty()) {
-//            throw IllegalArgumentException("Extended information cannot be null or empty")
-//        }
+        if (extendedInformation.isNullOrEmpty()) {
+            throw IllegalArgumentException("Extended information cannot be null or empty")
+        }
 
         val authentication = authentication()
 

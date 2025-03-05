@@ -3,6 +3,8 @@ plugins {
     id "org.jetbrains.kotlin.plugin.jpa" version "1.9.23"
     id "org.jetbrains.kotlin.plugin.noarg" version "1.9.23"
     id "org.jetbrains.kotlin.plugin.allopen" version "1.9.23"
+//    id 'com.google.devtools.ksp' version '2.0.20-1.0.24'
+    id "org.jetbrains.kotlin.kapt"
 }
 
 dependencies {
@@ -17,8 +19,9 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-oauth2-authorization-server:3.2.4')
     implementation('org.springframework.boot:spring-boot-starter-oauth2-client:3.2.4')
 
-    implementation("org.mapstruct:mapstruct:1.5.3.Final")
-    implementation("org.mapstruct.extensions.spring:mapstruct-spring-annotations:0.1.2")
+    implementation("org.mapstruct.extensions.spring:mapstruct-spring-annotations:1.1.2")
+    implementation 'org.mapstruct:mapstruct:1.6.3'
+    kapt 'org.mapstruct:mapstruct-processor:1.6.3' //TODO replace this KSP when it's stable
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'

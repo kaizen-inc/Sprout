@@ -6,6 +6,7 @@ import inc.kaizen.service.sprout.extension.capitalizeFirstLetter
 import inc.kaizen.service.sprout.constant.MODEL_PACKAGE_NAME
 import inc.kaizen.service.sprout.constant.PARENT_PATHS
 import inc.kaizen.service.sprout.constant.SERVICE_NAME
+import inc.kaizen.service.sprout.extension.plural
 import inc.kaizen.service.sprout.hooks.Component
 import inc.kaizen.service.sprout.hooks.file.IClassHook
 
@@ -46,7 +47,7 @@ class ControllerClassHook: IClassHook {
                     .build()
             )
         if (parentPaths.isNotEmpty()) {
-            val paths = parentPaths.map { "/${it.toString().lowercase()}s/{${it.toString().lowercase()}Id}" }
+            val paths = parentPaths.map { "/${it.toString().lowercase().plural()}/{${it.toString().lowercase()}Id}" }
                 .joinToString(separator = "")
             builder.addAnnotation(
                 AnnotationSpec.builder(ClassName("org.springframework.web.bind.annotation", "RequestMapping"))

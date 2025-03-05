@@ -15,7 +15,7 @@ data class AuthUserEntity(
     var credentialsExpired: Boolean,
     var enabled: Boolean,
     @OneToMany(mappedBy = "authUser", fetch = FetchType.EAGER)
-    var grantedAuthorities: Set<AuthorityEntity?>? = null
+    var grantedAuthorities: Set<AuthorityEntity> = emptySet()
 ): UserDetails, BaseEntity() {
     override fun getAuthorities() = grantedAuthorities
     override fun getPassword() = secret
